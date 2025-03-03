@@ -1,20 +1,14 @@
 import { Link } from "wouter";
 import { 
-  Plane, 
-  Shield, 
   MapPin, 
-  Globe2, 
   Building2, 
-  Umbrella, 
-  ShoppingBag,
-  Package,
+  Package, 
+  ShoppingBag, 
   UserCircle2,
-  GraduationCap,
   Phone,
-  FileText,
-  MousePointer2
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Navbar() {
   const navItems = [
@@ -38,14 +32,7 @@ export function Navbar() {
               <Phone className="h-4 w-4 text-primary" />
               <span className="text-sm">(55) 54 82 82 82</span>
             </div>
-            <Link href="/blog" className="flex items-center gap-2 hover:text-primary transition-colors">
-              <FileText className="h-4 w-4" />
-              <span className="text-sm">Nuestro Blog</span>
-            </Link>
-            <Link href="/sucursales" className="flex items-center gap-2 hover:text-primary transition-colors">
-              <MousePointer2 className="h-4 w-4" />
-              <span className="text-sm">Sucursales JepiTravel</span>
-            </Link>
+            <ThemeToggle />
           </div>
         </div>
 
