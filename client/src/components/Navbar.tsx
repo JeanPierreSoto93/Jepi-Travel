@@ -18,16 +18,11 @@ import { Separator } from "@/components/ui/separator";
 
 export function Navbar() {
   const navItems = [
-    { icon: Plane, label: "Vuelos" },
-    { icon: Shield, label: "Seguros" },
-    { icon: MapPin, label: "Tours" },
-    { icon: Globe2, label: "Vuelos + Hotel" },
+    { icon: MapPin, label: "Tours Cuetzalan" },
     { icon: Building2, label: "Hoteles" },
-    { icon: Umbrella, label: "Disney" },
-    { icon: ShoppingBag, label: "Paquetes" },
     { icon: Package, label: "Experiencias" },
-    { icon: UserCircle2, label: "Cruceros" },
-    { icon: GraduationCap, label: "Estudios en el extranjero" }
+    { icon: ShoppingBag, label: "Paquetes" },
+    { icon: UserCircle2, label: "Guías locales" }
   ];
 
   return (
@@ -36,11 +31,7 @@ export function Navbar() {
         {/* Top Bar */}
         <div className="flex items-center justify-between py-2">
           <Link href="/">
-            <img
-              src="https://www.mundojoven.com/_next/static/media/logo.a4cb0f51.svg"
-              alt="Mundo Joven"
-              className="h-8"
-            />
+            <span className="text-2xl font-bold text-primary">JepiTravel</span>
           </Link>
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
@@ -53,7 +44,7 @@ export function Navbar() {
             </Link>
             <Link href="/sucursales" className="flex items-center gap-2 hover:text-primary transition-colors">
               <MousePointer2 className="h-4 w-4" />
-              <span className="text-sm">Sucursales Mundo Joven</span>
+              <span className="text-sm">Sucursales JepiTravel</span>
             </Link>
           </div>
         </div>
