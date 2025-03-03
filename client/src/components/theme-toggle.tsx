@@ -23,25 +23,17 @@ export function ThemeToggle() {
   });
 
   useEffect(() => {
-    // Update theme.json when theme changes
-    const themeConfig = {
-      variant: "professional",
-      primary: theme,
-      appearance: "light",
-      radius: 0.5
-    };
+    // Update CSS variables when theme changes
+    document.documentElement.style.setProperty("--theme-primary", theme);
 
     // Save to localStorage
     localStorage.setItem("theme", theme);
-
-    // Update CSS variables
-    document.documentElement.style.setProperty("--primary", theme);
   }, [theme]);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" size="icon" className="w-10 h-10">
           <Paintbrush className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
