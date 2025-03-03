@@ -5,30 +5,30 @@ import { Button } from "@/components/ui/button";
 const tours = [
   {
     id: 1,
-    title: "Aventura en Cuetzalan",
-    image: "https://images.unsplash.com/photo-1589487391730-58f20eb2c308?q=80&w=1740", // Cuetzalan landscape
+    title: "Cascadas de Cuetzalan",
+    image: "https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=1740", // Waterfall image
     discount: "20%",
-    description: "Descubre la magia del Pueblo Mágico de Cuetzalan, sus cascadas y sitios arqueológicos.",
+    description: "Explora las majestuosas cascadas de Cuetzalan, incluyendo la famosa cascada Las Brisas y Velo de Novia.",
     startDate: "15 Dic 2025",
     price: 1899,
     originalPrice: 2375
   },
   {
     id: 2,
-    title: "Cuetzalan Cultural",
-    image: "https://images.unsplash.com/photo-1598885159329-a5983c6f0acc?q=80&w=1740", // Traditional dancers
+    title: "Centro Histórico y Artesanías",
+    image: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?q=80&w=1740", // Colonial architecture
     discount: "15%",
-    description: "Explora las tradiciones, danzas y gastronomía local de Cuetzalan.",
+    description: "Recorre el centro histórico de Cuetzalan, visita su iglesia principal y mercado de artesanías.",
     startDate: "Jun - Sep 2025",
     price: 2199,
     originalPrice: 2599
   },
   {
     id: 3,
-    title: "Cascadas y Grutas",
-    image: "https://images.unsplash.com/photo-1598884143267-c5c89a8c873f?q=80&w=1740", // Waterfalls
+    title: "Grutas de Cuetzalan",
+    image: "https://images.unsplash.com/photo-1499915174960-6f5340157928?q=80&w=1740", // Cave system
     discount: "25%",
-    description: "Visita las impresionantes cascadas y grutas de la región.",
+    description: "Aventúrate en las misteriosas grutas de Cuetzalan y descubre sus formaciones geológicas.",
     startDate: "Jun - Sep 2025",
     price: 1699,
     originalPrice: 2265
@@ -39,23 +39,27 @@ export function TourCards() {
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold mb-2">Tours en Cuetzalan: Descubre la magia de Puebla</h2>
+        <h2 className="text-2xl font-bold mb-2">Tours en Cuetzalan: Pueblo Mágico de Puebla</h2>
         <p className="text-gray-600">
-          Explora uno de los Pueblos Mágicos más hermosos de México. Desde sus calles empedradas y arquitectura colonial, hasta sus impresionantes cascadas y sitios arqueológicos.
+          Descubre la magia de Cuetzalan del Progreso, un pueblo mágico lleno de historia, tradiciones y belleza natural.
+          Desde cascadas impresionantes hasta arquitectura colonial y rica gastronomía.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {tours.map((tour) => (
-          <Card key={tour.id} className="overflow-hidden">
+          <Card key={tour.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
             <div className="relative">
               <img 
                 src={tour.image} 
                 alt={tour.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               />
               <Badge className="absolute top-4 left-4 bg-white text-primary">
                 Salidas garantizadas
+              </Badge>
+              <Badge variant="destructive" className="absolute top-4 right-4">
+                Hasta {tour.discount} de descuento
               </Badge>
             </div>
             <div className="p-6">
@@ -78,14 +82,11 @@ export function TourCards() {
                       MXN$ {tour.originalPrice.toLocaleString()}
                     </div>
                   </div>
-                  <Badge variant="destructive">
-                    Hasta {tour.discount} de descuento
-                  </Badge>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Button variant="outline">Solicita más info</Button>
-                  <Button>Ver paquete</Button>
+                  <Button variant="outline">Más información</Button>
+                  <Button>Reservar ahora</Button>
                 </div>
               </div>
             </div>
