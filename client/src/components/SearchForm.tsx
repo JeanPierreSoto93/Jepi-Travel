@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MapPin, Building2 } from "lucide-react";
+import { MapPin, Building2, Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 const searchTypes = [
   { icon: MapPin, label: "Tours", value: "tours" },
@@ -13,22 +18,10 @@ const searchTypes = [
 
 export function SearchForm() {
   const [destination, setDestination] = useState("");
-  const [selectedDate, setSelectedDate] = useState("");
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
   const [nights, setNights] = useState("11 a 15 noches");
   const regions = ["Europa", "Asia", "América", "África", "Oceanía"];
-
-  const CommonDateSelect = () => (
-    <Select value={selectedDate} onValueChange={setSelectedDate}>
-      <SelectTrigger>
-        <SelectValue placeholder="Abril 2025" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="abril-2025">Abril 2025</SelectItem>
-        <SelectItem value="mayo-2025">Mayo 2025</SelectItem>
-        <SelectItem value="junio-2025">Junio 2025</SelectItem>
-      </SelectContent>
-    </Select>
-  );
 
   return (
     <div className="container mx-auto px-4 -mt-16 relative z-10">
@@ -78,7 +71,28 @@ export function SearchForm() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Fecha</label>
-                <CommonDateSelect />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !startDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {startDate ? format(startDate, "PPP", { locale: es }) : <span>Selecciona fecha</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={setStartDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Duración</label>
@@ -105,11 +119,53 @@ export function SearchForm() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Check-in</label>
-                <CommonDateSelect />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !startDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {startDate ? format(startDate, "PPP", { locale: es }) : <span>Fecha de entrada</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={startDate}
+                      onSelect={setStartDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Check-out</label>
-                <CommonDateSelect />
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !endDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {endDate ? format(endDate, "PPP", { locale: es }) : <span>Fecha de salida</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={endDate}
+                      onSelect={setEndDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Huéspedes</label>
