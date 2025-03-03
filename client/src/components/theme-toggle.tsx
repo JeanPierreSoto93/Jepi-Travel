@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const themes = [
-  { name: "Rojo", value: "oklch(61.66% 0.191 27.4)" },
-  { name: "Azul", value: "oklch(61.66% 0.191 250.79)" },
-  { name: "Verde", value: "oklch(61.66% 0.191 142.73)" },
-  { name: "Morado", value: "oklch(61.66% 0.191 312.57)" },
-  { name: "Naranja", value: "oklch(61.66% 0.191 49.77)" }
+  { name: "Rojo", value: "0 100% 50%" },
+  { name: "Azul", value: "210 100% 50%" },
+  { name: "Verde", value: "120 100% 50%" },
+  { name: "Morado", value: "270 100% 50%" },
+  { name: "Naranja", value: "30 100% 50%" }
 ];
 
 export function ThemeToggle() {
@@ -24,7 +24,7 @@ export function ThemeToggle() {
 
   useEffect(() => {
     // Update CSS variables when theme changes
-    document.documentElement.style.setProperty("--theme-primary", theme);
+    document.documentElement.style.setProperty("--primary", theme);
 
     // Save to localStorage
     localStorage.setItem("theme", theme);
@@ -46,7 +46,7 @@ export function ThemeToggle() {
           >
             <div
               className="w-4 h-4 rounded-full"
-              style={{ backgroundColor: t.value }}
+              style={{ backgroundColor: `hsl(${t.value})` }}
             />
             {t.name}
           </DropdownMenuItem>
