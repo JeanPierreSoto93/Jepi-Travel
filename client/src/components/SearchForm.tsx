@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Calendar, Moon, Plane, Shield, MapPin, Globe2, Building2 } from "lucide-react";
+import { MapPin, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const searchTypes = [
-  { icon: Plane, label: "Vuelos", value: "flights" },
-  { icon: Shield, label: "Seguros", value: "insurance" },
   { icon: MapPin, label: "Tours", value: "tours" },
-  { icon: Globe2, label: "Vuelo + Hotel", value: "flight-hotel" },
   { icon: Building2, label: "Hoteles", value: "hotels" }
 ];
 
@@ -43,8 +40,8 @@ export function SearchForm() {
       >
         <h2 className="text-xl font-semibold mb-4">Encuentra tu próximo destino</h2>
 
-        <Tabs defaultValue="flights" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 mb-6">
+        <Tabs defaultValue="tours" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
             {searchTypes.map((type) => (
               <TabsTrigger
                 key={type.value}
@@ -56,28 +53,6 @@ export function SearchForm() {
               </TabsTrigger>
             ))}
           </TabsList>
-
-          {/* Flights Form */}
-          <TabsContent value="flights" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Origen</label>
-                <Input placeholder="Ciudad de origen" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Destino</label>
-                <Input placeholder="Ciudad de destino" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Fecha ida</label>
-                <CommonDateSelect />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Fecha vuelta</label>
-                <CommonDateSelect />
-              </div>
-            </div>
-          </TabsContent>
 
           {/* Tours Form */}
           <TabsContent value="tours" className="mt-0">
@@ -149,55 +124,6 @@ export function SearchForm() {
                     <SelectItem value="4">4 huéspedes</SelectItem>
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Insurance Form */}
-          <TabsContent value="insurance" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Tipo de seguro</label>
-                <Select defaultValue="viaje">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona tipo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="viaje">Seguro de viaje</SelectItem>
-                    <SelectItem value="cancelacion">Seguro de cancelación</SelectItem>
-                    <SelectItem value="medico">Seguro médico</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Fecha inicio</label>
-                <CommonDateSelect />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Fecha fin</label>
-                <CommonDateSelect />
-              </div>
-            </div>
-          </TabsContent>
-
-          {/* Flight + Hotel Form */}
-          <TabsContent value="flight-hotel" className="mt-0">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Origen</label>
-                <Input placeholder="Ciudad de origen" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Destino</label>
-                <Input placeholder="Ciudad de destino" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Ida</label>
-                <CommonDateSelect />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Vuelta</label>
-                <CommonDateSelect />
               </div>
             </div>
           </TabsContent>

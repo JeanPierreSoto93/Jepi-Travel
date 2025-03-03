@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { SearchForm } from "@/components/SearchForm";
+import { TourCards } from "@/components/TourCards";
 
 export default function Home() {
   return (
@@ -9,6 +10,7 @@ export default function Home() {
       <main>
         <Hero />
         <SearchForm />
+        <TourCards />
       </main>
     </div>
   );
