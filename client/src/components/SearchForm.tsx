@@ -1,16 +1,37 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Calendar, Moon } from "lucide-react";
+import { Search, Calendar, Moon, Plane, Shield, MapPin, Globe2, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const searchTypes = [
+  { icon: Plane, label: "Vuelos", value: "flights" },
+  { icon: Shield, label: "Seguros", value: "insurance" },
+  { icon: MapPin, label: "Tours", value: "tours" },
+  { icon: Globe2, label: "Vuelo + Hotel", value: "flight-hotel" },
+  { icon: Building2, label: "Hoteles", value: "hotels" }
+];
 
 export function SearchForm() {
   const [destination, setDestination] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [nights, setNights] = useState("11 a 15 noches");
-
   const regions = ["Europa", "Asia", "América", "África", "Oceanía"];
+
+  const CommonDateSelect = () => (
+    <Select value={selectedDate} onValueChange={setSelectedDate}>
+      <SelectTrigger>
+        <SelectValue placeholder="Abril 2025" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="abril-2025">Abril 2025</SelectItem>
+        <SelectItem value="mayo-2025">Mayo 2025</SelectItem>
+        <SelectItem value="junio-2025">Junio 2025</SelectItem>
+      </SelectContent>
+    </Select>
+  );
 
   return (
     <div className="container mx-auto px-4 -mt-16 relative z-10">
@@ -20,68 +41,173 @@ export function SearchForm() {
         transition={{ duration: 0.5, delay: 0.2 }}
         className="bg-white rounded-lg shadow-lg p-6"
       >
-        <h2 className="text-xl font-semibold mb-4">Encuentra tu tour ideal</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Destino</label>
-            <Select value={destination} onValueChange={setDestination}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona región" />
-              </SelectTrigger>
-              <SelectContent>
-                {regions.map((region) => (
-                  <SelectItem key={region} value={region.toLowerCase()}>
-                    {region}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <h2 className="text-xl font-semibold mb-4">Encuentra tu próximo destino</h2>
 
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Desde</label>
-            <Input
-              type="text"
-              placeholder="Madrid"
-              className="w-full"
-            />
-          </div>
+        <Tabs defaultValue="flights" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 mb-6">
+            {searchTypes.map((type) => (
+              <TabsTrigger
+                key={type.value}
+                value={type.value}
+                className="flex items-center gap-2"
+              >
+                <type.icon className="h-4 w-4" />
+                <span>{type.label}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Fecha</label>
-            <Select value={selectedDate} onValueChange={setSelectedDate}>
-              <SelectTrigger>
-                <SelectValue placeholder="Abril 2025" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="abril-2025">Abril 2025</SelectItem>
-                <SelectItem value="mayo-2025">Mayo 2025</SelectItem>
-                <SelectItem value="junio-2025">Junio 2025</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Flights Form */}
+          <TabsContent value="flights" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Origen</label>
+                <Input placeholder="Ciudad de origen" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Destino</label>
+                <Input placeholder="Ciudad de destino" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Fecha ida</label>
+                <CommonDateSelect />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Fecha vuelta</label>
+                <CommonDateSelect />
+              </div>
+            </div>
+          </TabsContent>
 
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Duración</label>
-            <Select value={nights} onValueChange={setNights}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona noches" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1-5">1 a 5 noches</SelectItem>
-                <SelectItem value="6-10">6 a 10 noches</SelectItem>
-                <SelectItem value="11-15">11 a 15 noches</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+          {/* Tours Form */}
+          <TabsContent value="tours" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Destino</label>
+                <Select value={destination} onValueChange={setDestination}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona región" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {regions.map((region) => (
+                      <SelectItem key={region} value={region.toLowerCase()}>
+                        {region}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Desde</label>
+                <Input placeholder="Madrid" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Fecha</label>
+                <CommonDateSelect />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Duración</label>
+                <Select value={nights} onValueChange={setNights}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona noches" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1-5">1 a 5 noches</SelectItem>
+                    <SelectItem value="6-10">6 a 10 noches</SelectItem>
+                    <SelectItem value="11-15">11 a 15 noches</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </TabsContent>
 
-        <div className="mt-6 flex justify-end">
-          <Button className="bg-primary hover:bg-primary/90 text-white">
-            Buscar
-          </Button>
-        </div>
+          {/* Hotels Form */}
+          <TabsContent value="hotels" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Destino</label>
+                <Input placeholder="¿A dónde vas?" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Check-in</label>
+                <CommonDateSelect />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Check-out</label>
+                <CommonDateSelect />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Huéspedes</label>
+                <Select defaultValue="2">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Número de huéspedes" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 huésped</SelectItem>
+                    <SelectItem value="2">2 huéspedes</SelectItem>
+                    <SelectItem value="3">3 huéspedes</SelectItem>
+                    <SelectItem value="4">4 huéspedes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Insurance Form */}
+          <TabsContent value="insurance" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Tipo de seguro</label>
+                <Select defaultValue="viaje">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona tipo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="viaje">Seguro de viaje</SelectItem>
+                    <SelectItem value="cancelacion">Seguro de cancelación</SelectItem>
+                    <SelectItem value="medico">Seguro médico</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Fecha inicio</label>
+                <CommonDateSelect />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Fecha fin</label>
+                <CommonDateSelect />
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* Flight + Hotel Form */}
+          <TabsContent value="flight-hotel" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Origen</label>
+                <Input placeholder="Ciudad de origen" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Destino</label>
+                <Input placeholder="Ciudad de destino" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Ida</label>
+                <CommonDateSelect />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Vuelta</label>
+                <CommonDateSelect />
+              </div>
+            </div>
+          </TabsContent>
+
+          <div className="mt-6 flex justify-end">
+            <Button className="bg-primary hover:bg-primary/90 text-white px-8">
+              Buscar
+            </Button>
+          </div>
+        </Tabs>
       </motion.div>
     </div>
   );
