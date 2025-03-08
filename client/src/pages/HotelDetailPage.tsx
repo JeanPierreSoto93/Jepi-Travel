@@ -37,6 +37,10 @@ const hotel = {
     "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1740",
     "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=1740",
     "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1740",
+    "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1740",
+    "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1740",
+    "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?q=80&w=1740",
+    "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?q=80&w=1740",
   ],
   rooms: [
     {
@@ -68,6 +72,21 @@ const hotel = {
       refundPolicy: "100% reembolsable antes del 25 mar",
       rating: 4.4,
       reviews: 45
+    },
+    {
+      id: 3,
+      name: "Suite Ejecutiva con Vista",
+      image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1740",
+      size: "45 metros cuadrados",
+      bedType: "1 cama King size",
+      maxGuests: 2,
+      amenities: ["Vista al mar", "Balcón privado", "Minibar", "WiFi gratis"],
+      price: 2299,
+      taxesAndFees: 415,
+      isRefundable: true,
+      refundPolicy: "100% reembolsable antes del 25 mar",
+      rating: 4.8,
+      reviews: 92
     }
   ]
 };
