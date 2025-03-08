@@ -111,14 +111,16 @@ const getAmenityIcon = (amenity: string) => {
 export default function HotelDetailPage() {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [showRooms, setShowRooms] = useState(false);
+  const [availableRooms, setAvailableRooms] = useState(hotel.rooms);
 
   const handleSearch = (searchParams: any) => {
     setIsLoading(true);
-    // Simulate API call
+    // Simulate API call to check room availability
     setTimeout(() => {
+      // For demo purposes, just filter some rooms randomly
+      const filteredRooms = hotel.rooms.filter(() => Math.random() > 0.3);
+      setAvailableRooms(filteredRooms);
       setIsLoading(false);
-      setShowRooms(true);
     }, 1500);
   };
 
@@ -150,7 +152,6 @@ export default function HotelDetailPage() {
       <Navbar />
       <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-7xl mx-auto space-y-8">
-          {/* Header Section */}
           <div className="flex justify-between items-start">
             <div>
               <h1 className="text-3xl font-bold mb-2">{hotel.name}</h1>
@@ -174,7 +175,6 @@ export default function HotelDetailPage() {
 
           <ImageGallery mainImage={hotel.image} additionalImages={hotel.additionalImages} />
 
-          {/* Hotel Information */}
           <div className="space-y-6">
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Descripción</h2>
@@ -220,81 +220,75 @@ export default function HotelDetailPage() {
             </Card>
           </div>
 
-          {/* Search Section */}
           <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4">Elige tu habitación</h2>
-            <SearchForm isInline={true} onSearch={handleSearch} />
+            <SearchForm isInline={true} onSearch={handleSearch} searchType="hotels" />
           </Card>
 
-          {/* Room Listings */}
-          {(isLoading || showRooms) && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-semibold">Habitaciones disponibles</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {isLoading ? (
-                  // Show skeletons while loading
-                  Array(3).fill(null).map((_, index) => (
-                    <RoomSkeleton key={index} />
-                  ))
-                ) : (
-                  // Show actual room cards
-                  hotel.rooms.map((room) => (
-                    <Card key={room.id} className="flex flex-col">
-                      <div className="relative">
-                        <img
-                          src={room.image}
-                          alt={room.name}
-                          className="w-full h-48 object-cover rounded-t-lg"
-                        />
-                        <div className="absolute top-2 right-2 px-2 py-1 bg-blue-900 text-white rounded">
-                          <span className="font-bold">{room.rating}</span>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold">Habitaciones disponibles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {isLoading ? (
+                Array(3).fill(null).map((_, index) => (
+                  <RoomSkeleton key={index} />
+                ))
+              ) : (
+                availableRooms.map((room) => (
+                  <Card key={room.id} className="flex flex-col">
+                    <div className="relative">
+                      <img
+                        src={room.image}
+                        alt={room.name}
+                        className="w-full h-48 object-cover rounded-t-lg"
+                      />
+                      <div className="absolute top-2 right-2 px-2 py-1 bg-blue-900 text-white rounded">
+                        <span className="font-bold">{room.rating}</span>
+                      </div>
+                    </div>
+                    <div className="p-4 flex-1 flex flex-col">
+                      <h3 className="text-lg font-semibold mb-1">{room.name}</h3>
+                      <p className="text-sm text-gray-600 mb-2">{room.size}</p>
+
+                      <div className="space-y-3 flex-1">
+                        <div className="text-sm">
+                          <p>{room.bedType}</p>
+                          <p>Máximo {room.maxGuests} personas</p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-1">
+                          {room.amenities.map((amenity, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">
+                              {amenity}
+                            </Badge>
+                          ))}
                         </div>
                       </div>
-                      <div className="p-4 flex-1 flex flex-col">
-                        <h3 className="text-lg font-semibold mb-1">{room.name}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{room.size}</p>
 
-                        <div className="space-y-3 flex-1">
-                          <div className="text-sm">
-                            <p>{room.bedType}</p>
-                            <p>Máximo {room.maxGuests} personas</p>
+                      <div className="mt-4">
+                        {room.isRefundable && (
+                          <p className="text-sm text-emerald-600 mb-2">{room.refundPolicy}</p>
+                        )}
+                        <div className="space-y-1">
+                          <div className="text-2xl font-bold">
+                            MXN ${room.price.toLocaleString()}
                           </div>
-
-                          <div className="flex flex-wrap gap-1">
-                            {room.amenities.map((amenity, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
-                                {amenity}
-                              </Badge>
-                            ))}
-                          </div>
+                          <p className="text-sm text-gray-500">
+                            MXN ${(room.price + room.taxesAndFees).toLocaleString()} total
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            incluye impuestos y cargos
+                          </p>
                         </div>
-
-                        <div className="mt-4">
-                          {room.isRefundable && (
-                            <p className="text-sm text-emerald-600 mb-2">{room.refundPolicy}</p>
-                          )}
-                          <div className="space-y-1">
-                            <div className="text-2xl font-bold">
-                              MXN ${room.price.toLocaleString()}
-                            </div>
-                            <p className="text-sm text-gray-500">
-                              MXN ${(room.price + room.taxesAndFees).toLocaleString()} total
-                            </p>
-                            <p className="text-xs text-gray-500">
-                              incluye impuestos y cargos
-                            </p>
-                          </div>
-                          <Button className="w-full mt-4">
-                            Reservar
-                          </Button>
-                        </div>
+                        <Button className="w-full mt-4">
+                          Reservar
+                        </Button>
                       </div>
-                    </Card>
-                  ))
-                )}
-              </div>
+                    </div>
+                  </Card>
+                ))
+              )}
             </div>
-          )}
+          </div>
         </div>
       </main>
       <Footer />
