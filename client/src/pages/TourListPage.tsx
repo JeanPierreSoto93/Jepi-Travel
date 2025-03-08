@@ -6,9 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Filter, SortAsc, ChevronLeft, ChevronRight } from "lucide-react";
+import { Filter, SortAsc, ChevronLeft, ChevronRight, X } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
-// This would come from your API in a real application
+// Mock tours data
 const mockTours = [
   {
     id: 1,
@@ -26,9 +33,78 @@ const mockTours = [
   // Add more mock tours...
 ];
 
+const FilterContent = () => (
+  <div className="space-y-6">
+    {/* Price Range */}
+    <div>
+      <h3 className="font-medium mb-3">Rango de precio</h3>
+      <div className="space-y-2">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>$0 - $1,000</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>$1,000 - $2,000</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>$2,000+</span>
+        </label>
+      </div>
+    </div>
+
+    <Separator />
+
+    {/* Duration */}
+    <div>
+      <h3 className="font-medium mb-3">Duración</h3>
+      <div className="space-y-2">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>Medio día</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>Día completo</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>Varios días</span>
+        </label>
+      </div>
+    </div>
+
+    <Separator />
+
+    {/* Categories */}
+    <div>
+      <h3 className="font-medium mb-3">Categorías</h3>
+      <div className="space-y-2">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>Aventura</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>Cultural</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>Gastronómico</span>
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" className="rounded" />
+          <span>Naturaleza</span>
+        </label>
+      </div>
+    </div>
+  </div>
+);
+
 export default function TourListPage() {
   const [location] = useLocation();
-  const [showFilters, setShowFilters] = useState(window.innerWidth >= 1024);
+  const [showDesktopFilters, setShowDesktopFilters] = useState(true);
   const searchParams = new URLSearchParams(location.split('?')[1]);
 
   return (
@@ -43,108 +119,55 @@ export default function TourListPage() {
               Mostrando resultados para: {searchParams.get('destination') || 'Todos los tours'}
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            className="lg:hidden"
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            <Filter className="h-5 w-5 mr-2" />
-            Filtros
-          </Button>
+
+          {/* Mobile Filter Button */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="lg:hidden">
+                <Filter className="h-5 w-5 mr-2" />
+                Filtros
+              </Button>
+            </SheetTrigger>
+            <SheetContent>
+              <SheetHeader>
+                <SheetTitle>Filtros de búsqueda</SheetTitle>
+              </SheetHeader>
+              <div className="py-6">
+                <FilterContent />
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters Sidebar */}
-          <div className={`${showFilters ? 'block' : 'hidden'} lg:block lg:w-1/4`}>
+          {/* Desktop Filters Sidebar */}
+          <div className={`hidden lg:block ${showDesktopFilters ? 'lg:w-1/4' : 'lg:w-auto'}`}>
             <div className="sticky top-4">
-              <Card className="p-6">
+              <Card className={`${showDesktopFilters ? 'p-6' : 'p-2'}`}>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Filter className="h-5 w-5" />
-                    <h2 className="text-lg font-semibold">Filtros</h2>
-                  </div>
+                  {showDesktopFilters && (
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-5 w-5" />
+                      <h2 className="text-lg font-semibold">Filtros</h2>
+                    </div>
+                  )}
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="hidden lg:flex"
-                    onClick={() => setShowFilters(!showFilters)}
+                    onClick={() => setShowDesktopFilters(!showDesktopFilters)}
+                    className="ml-auto"
                   >
-                    {showFilters ? <ChevronLeft /> : <ChevronRight />}
+                    {showDesktopFilters ? <ChevronLeft /> : <ChevronRight />}
                   </Button>
                 </div>
 
-                <div className="space-y-6">
-                  {/* Price Range */}
-                  <div>
-                    <h3 className="font-medium mb-3">Rango de precio</h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>$0 - $1,000</span>
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>$1,000 - $2,000</span>
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>$2,000+</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Duration */}
-                  <div>
-                    <h3 className="font-medium mb-3">Duración</h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>Medio día</span>
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>Día completo</span>
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>Varios días</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  {/* Categories */}
-                  <div>
-                    <h3 className="font-medium mb-3">Categorías</h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>Aventura</span>
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>Cultural</span>
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>Gastronómico</span>
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="checkbox" className="rounded" />
-                        <span>Naturaleza</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
+                {showDesktopFilters && <FilterContent />}
               </Card>
             </div>
           </div>
 
           {/* Tour Listings */}
-          <div className={`flex-1 ${showFilters ? 'lg:w-3/4' : 'lg:w-full'}`}>
+          <div className={`flex-1 ${showDesktopFilters ? 'lg:w-3/4' : 'lg:w-full'}`}>
             {/* Sort Controls */}
             <div className="flex items-center justify-between mb-6">
               <p className="text-gray-600">{mockTours.length} tours encontrados</p>
