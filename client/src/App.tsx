@@ -6,6 +6,8 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
 import TourListPage from "@/pages/TourListPage";
 import HotelListPage from "@/pages/HotelListPage";
+import HotelDetailPage from "@/pages/HotelDetailPage";
+import TourDetailPage from "@/pages/TourDetailPage";
 
 function Router() {
   return (
@@ -13,6 +15,8 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/tours" component={TourListPage} />
       <Route path="/hotels" component={HotelListPage} />
+      <Route path="/hotels/:id" component={HotelDetailPage} />
+      <Route path="/tours/:id" component={TourDetailPage} />
       <Route component={NotFound} />
     </Switch>
   );

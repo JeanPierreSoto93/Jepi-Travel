@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useNavigate } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -210,7 +210,7 @@ const formatDate = (dateString: string | null) => {
 };
 
 export default function TourListPage() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchForm, setShowSearchForm] = useState(false);
   const searchParams = new URLSearchParams(location.split('?')[1]);
@@ -410,6 +410,7 @@ export default function TourListPage() {
                           <Button
                             size="sm"
                             className="text-xs h-8"
+                            onClick={() => setLocation(`/tours/${tour.id}`)}
                           >
                             Reservar
                           </Button>

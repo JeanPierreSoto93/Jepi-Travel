@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useNavigate } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -160,7 +160,7 @@ const getAmenityIcon = (amenity: string) => {
 };
 
 export default function HotelListPage() {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const [showSearchForm, setShowSearchForm] = useState(false);
   const searchParams = new URLSearchParams(location.split('?')[1]);
 
@@ -311,7 +311,7 @@ export default function HotelListPage() {
                           </div>
                         </div>
                         <p className="text-sm text-gray-600 mb-2">{hotel.location}</p>
-                        <p className="text-sm text-gray-600">{hotel.description}</p>
+                        <p className="text-sm text-gray600">{hotel.description}</p>
                       </div>
 
                       <div className="space-y-4">
@@ -344,7 +344,7 @@ export default function HotelListPage() {
                               MXN ${hotel.originalPrice.toLocaleString()}
                             </div>
                           </div>
-                          <Button>
+                          <Button onClick={() => setLocation(`/hotels/${hotel.id}`)}>
                             Reservar ahora
                           </Button>
                         </div>
