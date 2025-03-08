@@ -6,17 +6,17 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { 
-  Wifi, 
-  Waves, 
-  Coffee, 
-  ParkingCircle, 
+import {
+  Wifi,
+  Waves,
+  Coffee,
+  ParkingCircle,
   Star,
   MapPin,
   Phone,
   Clock,
   Calendar,
-  Users 
+  Users
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -112,8 +112,8 @@ export default function HotelDetailPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="space-y-8">
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto space-y-8">
           {/* Header Section */}
           <div className="flex justify-between items-start">
             <div>
@@ -129,7 +129,7 @@ export default function HotelDetailPage() {
                 </div>
               </div>
             </div>
-            <ShareButtons 
+            <ShareButtons
               title={hotel.name}
               description={hotel.description}
               image={hotel.image}
@@ -223,8 +223,8 @@ export default function HotelDetailPage() {
               {hotel.rooms.map((room) => (
                 <Card key={room.id} className="flex flex-col">
                   <div className="relative">
-                    <img 
-                      src={room.image} 
+                    <img
+                      src={room.image}
                       alt={room.name}
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
