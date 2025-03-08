@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -19,6 +20,7 @@ import {
   Users
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { SearchForm } from "@/components/SearchForm";
 
 // Mock hotel data (replace with actual data fetching)
 const hotel = {
@@ -108,6 +110,40 @@ const getAmenityIcon = (amenity: string) => {
 
 export default function HotelDetailPage() {
   const params = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showRooms, setShowRooms] = useState(false);
+
+  const handleSearch = (searchParams: any) => {
+    setIsLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowRooms(true);
+    }, 1500);
+  };
+
+  const RoomSkeleton = () => (
+    <Card className="flex flex-col animate-pulse">
+      <div className="bg-gray-200 h-48 rounded-t-lg"></div>
+      <div className="p-4 space-y-4">
+        <div className="h-6 bg-gray-200 rounded w-3/4"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="space-y-2">
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        </div>
+        <div className="flex gap-2">
+          <div className="h-6 bg-gray-200 rounded w-20"></div>
+          <div className="h-6 bg-gray-200 rounded w-20"></div>
+        </div>
+        <div className="space-y-2">
+          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+        </div>
+        <div className="h-10 bg-gray-200 rounded"></div>
+      </div>
+    </Card>
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -136,7 +172,6 @@ export default function HotelDetailPage() {
             />
           </div>
 
-          {/* Image Gallery */}
           <ImageGallery mainImage={hotel.image} additionalImages={hotel.additionalImages} />
 
           {/* Hotel Information */}
@@ -188,93 +223,78 @@ export default function HotelDetailPage() {
           {/* Search Section */}
           <Card className="p-6">
             <h2 className="text-lg font-semibold mb-4">Elige tu habitación</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Check-in</label>
-                <Button variant="outline" className="w-full">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Seleccionar fecha
-                </Button>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Check-out</label>
-                <Button variant="outline" className="w-full">
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Seleccionar fecha
-                </Button>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Huéspedes</label>
-                <Button variant="outline" className="w-full justify-between">
-                  <div className="flex items-center">
-                    <Users className="h-4 w-4 mr-2" />
-                    2 huéspedes
-                  </div>
-                  <span className="text-gray-400">▼</span>
-                </Button>
-              </div>
-            </div>
+            <SearchForm isInline={true} onSearch={handleSearch} />
           </Card>
 
           {/* Room Listings */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-semibold">Habitaciones disponibles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {hotel.rooms.map((room) => (
-                <Card key={room.id} className="flex flex-col">
-                  <div className="relative">
-                    <img
-                      src={room.image}
-                      alt={room.name}
-                      className="w-full h-48 object-cover rounded-t-lg"
-                    />
-                    <div className="absolute top-2 right-2 px-2 py-1 bg-blue-900 text-white rounded">
-                      <span className="font-bold">{room.rating}</span>
-                    </div>
-                  </div>
-                  <div className="p-4 flex-1 flex flex-col">
-                    <h3 className="text-lg font-semibold mb-1">{room.name}</h3>
-                    <p className="text-sm text-gray-600 mb-2">{room.size}</p>
-
-                    <div className="space-y-3 flex-1">
-                      <div className="text-sm">
-                        <p>{room.bedType}</p>
-                        <p>Máximo {room.maxGuests} personas</p>
-                      </div>
-
-                      <div className="flex flex-wrap gap-1">
-                        {room.amenities.map((amenity, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {amenity}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      {room.isRefundable && (
-                        <p className="text-sm text-emerald-600 mb-2">{room.refundPolicy}</p>
-                      )}
-                      <div className="space-y-1">
-                        <div className="text-2xl font-bold">
-                          MXN ${room.price.toLocaleString()}
+          {(isLoading || showRooms) && (
+            <div className="space-y-4">
+              <h2 className="text-2xl font-semibold">Habitaciones disponibles</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {isLoading ? (
+                  // Show skeletons while loading
+                  Array(3).fill(null).map((_, index) => (
+                    <RoomSkeleton key={index} />
+                  ))
+                ) : (
+                  // Show actual room cards
+                  hotel.rooms.map((room) => (
+                    <Card key={room.id} className="flex flex-col">
+                      <div className="relative">
+                        <img
+                          src={room.image}
+                          alt={room.name}
+                          className="w-full h-48 object-cover rounded-t-lg"
+                        />
+                        <div className="absolute top-2 right-2 px-2 py-1 bg-blue-900 text-white rounded">
+                          <span className="font-bold">{room.rating}</span>
                         </div>
-                        <p className="text-sm text-gray-500">
-                          MXN ${(room.price + room.taxesAndFees).toLocaleString()} total
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          incluye impuestos y cargos
-                        </p>
                       </div>
-                      <Button className="w-full mt-4">
-                        Reservar
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
+                      <div className="p-4 flex-1 flex flex-col">
+                        <h3 className="text-lg font-semibold mb-1">{room.name}</h3>
+                        <p className="text-sm text-gray-600 mb-2">{room.size}</p>
+
+                        <div className="space-y-3 flex-1">
+                          <div className="text-sm">
+                            <p>{room.bedType}</p>
+                            <p>Máximo {room.maxGuests} personas</p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-1">
+                            {room.amenities.map((amenity, index) => (
+                              <Badge key={index} variant="outline" className="text-xs">
+                                {amenity}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="mt-4">
+                          {room.isRefundable && (
+                            <p className="text-sm text-emerald-600 mb-2">{room.refundPolicy}</p>
+                          )}
+                          <div className="space-y-1">
+                            <div className="text-2xl font-bold">
+                              MXN ${room.price.toLocaleString()}
+                            </div>
+                            <p className="text-sm text-gray-500">
+                              MXN ${(room.price + room.taxesAndFees).toLocaleString()} total
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              incluye impuestos y cargos
+                            </p>
+                          </div>
+                          <Button className="w-full mt-4">
+                            Reservar
+                          </Button>
+                        </div>
+                      </div>
+                    </Card>
+                  ))
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </main>
       <Footer />
