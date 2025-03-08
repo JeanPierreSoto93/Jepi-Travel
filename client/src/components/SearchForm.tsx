@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { MapPin, Building2, Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,11 +18,22 @@ const searchTypes = [
 ];
 
 export function SearchForm() {
+  const [, setLocation] = useLocation();
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [nights, setNights] = useState("11 a 15 noches");
   const regions = ["Europa", "Asia", "América", "África", "Oceanía"];
+
+  const handleSearch = () => {
+    const searchParams = new URLSearchParams();
+    if (destination) searchParams.set('destination', destination);
+    if (startDate) searchParams.set('startDate', startDate.toISOString());
+    if (endDate) searchParams.set('endDate', endDate.toISOString());
+    if (nights) searchParams.set('nights', nights);
+
+    setLocation(`/tours?${searchParams.toString()}`);
+  };
 
   return (
     <div className="container mx-auto px-4 -mt-16 relative z-10">
@@ -185,7 +197,10 @@ export function SearchForm() {
           </TabsContent>
 
           <div className="mt-6 flex justify-end">
-            <Button className="bg-primary hover:bg-primary/90 text-white px-8">
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-white px-8"
+              onClick={handleSearch}
+            >
               Buscar
             </Button>
           </div>
