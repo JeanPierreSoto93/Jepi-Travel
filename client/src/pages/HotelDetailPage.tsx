@@ -2,6 +2,7 @@ import { useParams } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ImageGallery } from "@/components/ImageGallery";
+import { ShareButtons } from "@/components/ShareButtons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -68,18 +69,25 @@ export default function HotelDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold mb-2">{hotel.name}</h1>
-              <div className="flex items-center gap-4 text-sm text-gray-600">
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  <span>{hotel.location}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
-                  <span>{hotel.rating} ({hotel.reviews} reseñas)</span>
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-3xl font-bold mb-2">{hotel.name}</h1>
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-4 w-4" />
+                    <span>{hotel.location}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-500 text-yellow-500" />
+                    <span>{hotel.rating} ({hotel.reviews} reseñas)</span>
+                  </div>
                 </div>
               </div>
+              <ShareButtons 
+                title={hotel.name}
+                description={hotel.description}
+                image={hotel.image}
+              />
             </div>
 
             {/* Image Gallery */}
