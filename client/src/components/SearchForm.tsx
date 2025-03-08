@@ -22,7 +22,10 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-  const [nights, setNights] = useState("11 a 15 noches");
+  const [nights, setNights] = useState("");
+  const [guests, setGuests] = useState("2");
+  const [searchType, setSearchType] = useState("tours");
+
   const regions = ["Europa", "Asia", "América", "África", "Oceanía"];
 
   const handleSearch = () => {
@@ -31,6 +34,8 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
     if (startDate) searchParams.set('startDate', startDate.toISOString());
     if (endDate) searchParams.set('endDate', endDate.toISOString());
     if (nights) searchParams.set('nights', nights);
+    if (guests) searchParams.set('guests', guests);
+    searchParams.set('type', searchType);
 
     setLocation(`/tours?${searchParams.toString()}`);
 
@@ -59,7 +64,7 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
           <h2 className="text-xl font-semibold mb-4">Encuentra tu próximo destino</h2>
         )}
 
-        <Tabs defaultValue="tours" className="w-full">
+        <Tabs value={searchType} onValueChange={setSearchType} className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
             {searchTypes.map((type) => (
               <TabsTrigger
@@ -91,12 +96,9 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-2">
-                <label className="text-sm text-gray-600">Desde</label>
-                <Input placeholder="Madrid" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm text-gray-600">Fecha</label>
+                <label className="text-sm text-gray-600">Fecha de salida</label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -120,6 +122,7 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
                   </PopoverContent>
                 </Popover>
               </div>
+
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Duración</label>
                 <Select value={nights} onValueChange={setNights}>
@@ -133,6 +136,21 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div className="space-y-2">
+                <label className="text-sm text-gray-600">Viajeros</label>
+                <Select value={guests} onValueChange={setGuests}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Número de viajeros" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">1 viajero</SelectItem>
+                    <SelectItem value="2">2 viajeros</SelectItem>
+                    <SelectItem value="3">3 viajeros</SelectItem>
+                    <SelectItem value="4">4 o más</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </TabsContent>
 
@@ -143,6 +161,7 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
                 <label className="text-sm text-gray-600">Destino</label>
                 <Input placeholder="¿A dónde vas?" />
               </div>
+
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Check-in</label>
                 <Popover>
@@ -168,6 +187,7 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
                   </PopoverContent>
                 </Popover>
               </div>
+
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Check-out</label>
                 <Popover>
@@ -193,9 +213,10 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
                   </PopoverContent>
                 </Popover>
               </div>
+
               <div className="space-y-2">
                 <label className="text-sm text-gray-600">Huéspedes</label>
-                <Select defaultValue="2">
+                <Select value={guests} onValueChange={setGuests}>
                   <SelectTrigger>
                     <SelectValue placeholder="Número de huéspedes" />
                   </SelectTrigger>
@@ -203,7 +224,7 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
                     <SelectItem value="1">1 huésped</SelectItem>
                     <SelectItem value="2">2 huéspedes</SelectItem>
                     <SelectItem value="3">3 huéspedes</SelectItem>
-                    <SelectItem value="4">4 huéspedes</SelectItem>
+                    <SelectItem value="4">4 o más</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

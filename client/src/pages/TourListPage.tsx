@@ -237,7 +237,7 @@ export default function TourListPage() {
                 <h2 className="text-lg font-semibold">Modificar búsqueda</h2>
                 <Button
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={() => setShowSearchForm(false)}
                 >
                   <X className="h-4 w-4" />
@@ -246,40 +246,30 @@ export default function TourListPage() {
               <SearchForm isInline={true} onSearch={() => setShowSearchForm(false)} />
             </div>
           ) : (
-            <div className="p-6">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <div className="flex items-start lg:items-center gap-4">
-                  <Search className="h-5 w-5 text-primary mt-1 lg:mt-0" />
-                  <div>
-                    <h2 className="text-lg font-semibold mb-1">Resultados de búsqueda</h2>
-                    <div className="text-sm text-gray-600 space-y-1">
-                      <p>
-                        <span className="font-medium">Destino:</span> {searchSummary.destination}
-                      </p>
-                      <p>
-                        <span className="font-medium">Fecha de ida:</span> {searchSummary.startDate}
-                      </p>
-                      {searchSummary.endDate !== 'Cualquier fecha' && (
-                        <p>
-                          <span className="font-medium">Fecha de regreso:</span> {searchSummary.endDate}
-                        </p>
-                      )}
-                      <p>
-                        <span className="font-medium">Duración:</span> {searchSummary.nights}
-                      </p>
-                      <p>
-                        <span className="font-medium">Viajeros:</span> {searchSummary.guests}
-                      </p>
-                    </div>
+            <div className="p-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start sm:items-center gap-3 min-w-0">
+                  <Search className="h-4 w-4 text-primary mt-1 sm:mt-0 flex-shrink-0" />
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-medium mb-1 sm:mb-0">Resultados de búsqueda</h2>
+                    <p className="text-sm text-gray-600 truncate">
+                      {searchSummary.destination} • 
+                      {searchParams.get('type') === 'hotels' ? ' Hotel' : ' Tour'} • 
+                      {searchSummary.startDate} • 
+                      {searchSummary.nights} • 
+                      {searchSummary.guests} {parseInt(searchSummary.guests) === 1 ? 'viajero' : 'viajeros'}
+                    </p>
                   </div>
                 </div>
                 <Button 
                   variant="outline"
+                  size="sm"
                   onClick={() => setShowSearchForm(true)}
-                  className="flex items-center gap-2 whitespace-nowrap"
+                  className="flex items-center gap-2 whitespace-nowrap flex-shrink-0"
                 >
-                  <Edit3 className="h-4 w-4" />
-                  Modificar búsqueda
+                  <Edit3 className="h-3 w-3" />
+                  <span className="sm:inline hidden">Modificar búsqueda</span>
+                  <span className="sm:hidden inline">Modificar</span>
                 </Button>
               </div>
             </div>
