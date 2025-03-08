@@ -122,6 +122,84 @@ const FilterContent = () => (
   </div>
 );
 
+// Custom Cuetzalan-themed skeleton loader component
+const TourCardSkeleton = () => (
+  <Card className="overflow-hidden relative">
+    {/* Top decorative pattern */}
+    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 animate-shimmer" />
+
+    {/* Image skeleton with Cuetzalan-style overlay */}
+    <div className="relative">
+      <Skeleton className="w-full h-40" />
+      <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(68,64,60,0.1)_25%,rgba(68,64,60,0.1)_50%,transparent_50%,transparent_75%,rgba(68,64,60,0.1)_75%)] bg-[length:10px_10px]" />
+    </div>
+
+    {/* Content skeleton with traditional pattern spacing */}
+    <div className="p-4 space-y-3">
+      {/* Title with zigzag pattern */}
+      <div className="relative">
+        <Skeleton className="h-5 w-3/4" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 h-3 w-12 bg-gradient-to-r from-transparent via-primary/20 to-transparent animate-pulse" />
+      </div>
+
+      {/* Description lines with decorative elements */}
+      <div className="space-y-2">
+        <Skeleton className="h-3 w-full" />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-3 w-5/6" />
+          <div className="h-3 w-3 rounded-full bg-primary/20 animate-pulse" />
+        </div>
+      </div>
+
+      {/* Price and details section */}
+      <div className="mt-4 space-y-3">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-3 w-20" />
+        </div>
+
+        {/* Tags skeleton with traditional spacing */}
+        <div className="flex gap-2">
+          <Skeleton className="h-5 w-16 rounded-full" />
+          <Skeleton className="h-5 w-20 rounded-full" />
+        </div>
+
+        {/* Price block with decorative corner */}
+        <div className="relative">
+          <Skeleton className="h-6 w-32" />
+          <div className="absolute -right-1 -top-1 h-3 w-3 rotate-45 bg-primary/20 animate-pulse" />
+        </div>
+
+        {/* Action buttons with wave pattern */}
+        <div className="grid grid-cols-2 gap-2 mt-2">
+          <Skeleton className="h-8" />
+          <Skeleton className="h-8" />
+        </div>
+      </div>
+    </div>
+
+    {/* Bottom decorative pattern */}
+    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 animate-shimmer" />
+  </Card>
+);
+
+const shimmerAnimation = `
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  .animate-shimmer {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(to right, transparent 0%, rgba(var(--primary) / 0.1) 50%, transparent 100%);
+    background-size: 1000px 100%;
+  }
+`;
+
+
 export default function TourListPage() {
   const [location] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
@@ -132,31 +210,6 @@ export default function TourListPage() {
   const handleEditSearch = () => {
     setLocation("/");
   };
-
-  // Loading skeleton for tour cards
-  const TourCardSkeleton = () => (
-    <Card className="overflow-hidden">
-      <Skeleton className="w-full h-40" />
-      <div className="p-4 space-y-2">
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-3 w-full" />
-        <Skeleton className="h-3 w-5/6" />
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-3 w-24" />
-          </div>
-          <div className="flex gap-2">
-            <Skeleton className="h-6 w-20" />
-            <Skeleton className="h-6 w-20" />
-          </div>
-          <div className="pt-2">
-            <Skeleton className="h-8 w-full" />
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -176,8 +229,8 @@ export default function TourListPage() {
                 </p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={handleEditSearch}
               className="flex items-center gap-2"
             >
@@ -248,8 +301,8 @@ export default function TourListPage() {
                   <Card key={tour.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
                     <div className="relative">
                       <div className="overflow-hidden">
-                        <img 
-                          src={tour.image} 
+                        <img
+                          src={tour.image}
                           alt={tour.title}
                           className="w-full h-40 object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
                         />
@@ -279,9 +332,9 @@ export default function TourListPage() {
 
                         <div className="flex flex-wrap gap-1 mb-2">
                           {tour.tags.map((tag) => (
-                            <Badge 
-                              key={tag} 
-                              variant="outline" 
+                            <Badge
+                              key={tag}
+                              variant="outline"
                               className="text-xs px-2 py-0"
                             >
                               {tag}
@@ -302,14 +355,14 @@ export default function TourListPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-2">
-                          <Button 
+                          <Button
                             variant="outline"
                             size="sm"
                             className="text-xs h-8"
                           >
                             Más info
                           </Button>
-                          <Button 
+                          <Button
                             size="sm"
                             className="text-xs h-8"
                           >
