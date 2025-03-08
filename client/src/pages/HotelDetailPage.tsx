@@ -1,6 +1,7 @@
-import { useParams, useLocation } from "wouter";
+import { useParams } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { ImageGallery } from "@/components/ImageGallery";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -38,6 +39,7 @@ const hotel = {
   additionalImages: [
     "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1740",
     "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=1740",
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1740",
   ]
 };
 
@@ -58,7 +60,6 @@ const getAmenityIcon = (amenity: string) => {
 
 export default function HotelDetailPage() {
   const params = useParams();
-  const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -82,23 +83,7 @@ export default function HotelDetailPage() {
             </div>
 
             {/* Image Gallery */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <img
-                  src={hotel.image}
-                  alt={hotel.name}
-                  className="w-full h-96 object-cover rounded-lg"
-                />
-              </div>
-              {hotel.additionalImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`${hotel.name} ${index + 1}`}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-              ))}
-            </div>
+            <ImageGallery mainImage={hotel.image} additionalImages={hotel.additionalImages} />
 
             {/* Description */}
             <Card className="p-6">

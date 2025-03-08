@@ -1,6 +1,7 @@
-import { useParams, useLocation } from "wouter";
+import { useParams } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { ImageGallery } from "@/components/ImageGallery";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -68,12 +69,12 @@ const tour = {
   additionalImages: [
     "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?q=80&w=1740",
     "https://images.unsplash.com/photo-1499915174960-6f5340157928?q=80&w=1740",
+    "https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=1740",
   ]
 };
 
 export default function TourDetailPage() {
   const params = useParams();
-  const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -97,29 +98,13 @@ export default function TourDetailPage() {
             </div>
 
             {/* Image Gallery */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2">
-                <img
-                  src={tour.image}
-                  alt={tour.title}
-                  className="w-full h-96 object-cover rounded-lg"
-                />
-              </div>
-              {tour.additionalImages.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`${tour.title} ${index + 1}`}
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-              ))}
-            </div>
+            <ImageGallery mainImage={tour.image} additionalImages={tour.additionalImages} />
 
             {/* Tour Overview */}
             <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Descripción del tour</h2>
               <p className="text-gray-600 mb-6">{tour.description}</p>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="flex flex-col items-center text-center p-4 bg-gray-50 rounded-lg">
                   <Clock className="h-6 w-6 text-primary mb-2" />
