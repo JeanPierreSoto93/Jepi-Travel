@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Filter, SortAsc, X, Search, Edit3, Wifi, Waves, Heart, Star } from "lucide-react";
+import { Filter, SortAsc, X, Search, Edit3, Wifi, Waves, Coffee, ParkingCircle, Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SearchForm } from "@/components/SearchForm";
 import {
@@ -24,15 +24,15 @@ const hotels = [
     name: "Hotel Boutique Cuetzalan",
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1740",
     description: "Hermoso hotel boutique en el corazón de Cuetzalan, con vistas panorámicas y arquitectura colonial.",
-    rating: 7.6,
-    reviews: 465,
+    rating: 4.8,
+    reviews: 128,
     price: 1899,
     originalPrice: 2375,
-    discount: "62%",
-    amenities: ["Todo incluido", "Alberca", "Tina de hidromasaje"],
-    isRefundable: true,
-    location: "Zona Hotelera",
-    vipAccess: true
+    discount: "20%",
+    amenities: ["wifi", "pool", "parking", "restaurant"],
+    roomTypes: ["Individual", "Doble", "Suite"],
+    location: "Centro Histórico, Cuetzalan",
+    distance: "0.2 km del centro"
   },
   {
     id: 2,
@@ -45,9 +45,9 @@ const hotels = [
     originalPrice: 1899,
     discount: "15%",
     amenities: ["wifi", "parking", "restaurant"],
-    isRefundable: false,
+    roomTypes: ["Individual", "Doble"],
     location: "Barrio de Zacatipan, Cuetzalan",
-    vipAccess: false
+    distance: "0.5 km del centro"
   },
   {
     id: 3,
@@ -60,9 +60,9 @@ const hotels = [
     originalPrice: 2999,
     discount: "17%",
     amenities: ["wifi", "pool", "parking", "restaurant", "spa"],
-    isRefundable: true,
+    roomTypes: ["Doble", "Suite", "Villa"],
     location: "Zona Panorámica, Cuetzalan",
-    vipAccess: false
+    distance: "1.2 km del centro"
   }
 ];
 
@@ -144,6 +144,20 @@ const formatDate = (dateString: string | null) => {
   });
 };
 
+const getAmenityIcon = (amenity: string) => {
+  switch (amenity) {
+    case 'wifi':
+      return <Wifi className="h-4 w-4" />;
+    case 'pool':
+      return <Waves className="h-4 w-4" />;
+    case 'parking':
+      return <ParkingCircle className="h-4 w-4" />;
+    case 'restaurant':
+      return <Coffee className="h-4 w-4" />;
+    default:
+      return null;
+  }
+};
 
 export default function HotelListPage() {
   const [location] = useLocation();
@@ -275,77 +289,64 @@ export default function HotelListPage() {
                 <Card key={hotel.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300">
                   <div className="flex flex-col md:flex-row">
                     <div className="md:w-1/3 relative">
-                      <div className="overflow-hidden h-full">
+                      <div className="overflow-hidden">
                         <img
                           src={hotel.image}
                           alt={hotel.name}
                           className="w-full h-full object-cover aspect-video md:aspect-square group-hover:scale-105 transition-transform duration-700"
                         />
                       </div>
-                      <div className="absolute top-4 left-4 flex gap-2">
-                        {hotel.vipAccess && (
-                          <Badge className="bg-blue-900 hover:bg-blue-800">
-                            VIP Access
-                          </Badge>
-                        )}
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="icon"
-                        className="absolute top-4 right-4 bg-white/80 hover:bg-white"
-                      >
-                        <Heart className="h-4 w-4" />
-                      </Button>
+                      <Badge className="absolute top-2 right-2 bg-emerald-500 hover:bg-emerald-600">
+                        -{hotel.discount}
+                      </Badge>
                     </div>
 
                     <div className="p-6 md:w-2/3">
-                      <div className="flex flex-col h-full">
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <h3 className="text-xl font-semibold mb-1">{hotel.name}</h3>
-                            <p className="text-sm text-gray-600">{hotel.location}</p>
-                          </div>
-                          <div className="flex flex-col items-end">
-                            <div className="flex items-center gap-2 px-2 py-1 bg-blue-900 text-white rounded">
-                              <span className="font-bold">{hotel.rating}</span>
-                              <span className="text-sm">Bueno</span>
-                            </div>
-                            <p className="text-xs text-gray-500 mt-1">{hotel.reviews} opiniones</p>
+                      <div className="mb-4">
+                        <div className="flex justify-between items-start">
+                          <h3 className="text-xl font-semibold mb-1">{hotel.name}</h3>
+                          <div className="flex items-center gap-1 text-yellow-500">
+                            <Star className="fill-current h-4 w-4" />
+                            <span className="font-medium">{hotel.rating}</span>
                           </div>
                         </div>
+                        <p className="text-sm text-gray-600 mb-2">{hotel.location}</p>
+                        <p className="text-sm text-gray-600">{hotel.description}</p>
+                      </div>
 
-                        <div className="flex gap-4 mb-4">
-                          {hotel.amenities.map((amenity, index) => (
-                            <div key={index} className="flex items-center gap-1">
-                              <span className="text-sm">{amenity}</span>
+                      <div className="space-y-4">
+                        {/* Amenities */}
+                        <div className="flex flex-wrap gap-4">
+                          {hotel.amenities.map((amenity) => (
+                            <div key={amenity} className="flex items-center gap-1 text-gray-600">
+                              {getAmenityIcon(amenity)}
+                              <span className="text-sm capitalize">{amenity}</span>
                             </div>
                           ))}
                         </div>
 
-                        <div className="mt-auto">
-                          {hotel.isRefundable && (
-                            <p className="text-sm text-emerald-600 mb-2">100% reembolsable</p>
-                          )}
+                        {/* Room Types */}
+                        <div className="flex flex-wrap gap-2">
+                          {hotel.roomTypes.map((type) => (
+                            <Badge key={type} variant="outline" className="text-xs">
+                              {type}
+                            </Badge>
+                          ))}
+                        </div>
 
-                          <div className="flex items-end justify-between">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <div className="text-2xl font-bold">
-                                  MXN ${hotel.price.toLocaleString()}
-                                </div>
-                                <Badge className="bg-emerald-500 hover:bg-emerald-600">
-                                  -{hotel.discount}
-                                </Badge>
-                              </div>
-                              <p className="text-sm text-gray-500">
-                                MXN ${Math.round(hotel.price * 1.16).toLocaleString()} en total
-                              </p>
-                              <p className="text-xs text-gray-500">impuestos y cargos incluidos</p>
+                        <div className="flex items-end justify-between">
+                          <div>
+                            <p className="text-sm text-gray-600">Precio por noche</p>
+                            <div className="text-2xl font-bold text-primary">
+                              MXN ${hotel.price.toLocaleString()}
                             </div>
-                            <Button size="lg">
-                              Reservar
-                            </Button>
+                            <div className="text-sm line-through text-gray-400">
+                              MXN ${hotel.originalPrice.toLocaleString()}
+                            </div>
                           </div>
+                          <Button>
+                            Reservar ahora
+                          </Button>
                         </div>
                       </div>
                     </div>
