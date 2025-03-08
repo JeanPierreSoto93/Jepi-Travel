@@ -37,7 +37,9 @@ export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
     if (guests) searchParams.set('guests', guests);
     searchParams.set('type', searchType);
 
-    setLocation(`/tours?${searchParams.toString()}`);
+    // Redirect to the appropriate listing page based on search type
+    const route = searchType === 'hotels' ? '/hotels' : '/tours';
+    setLocation(`${route}?${searchParams.toString()}`);
 
     if (onSearch) {
       onSearch();
