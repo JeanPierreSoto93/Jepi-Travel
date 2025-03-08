@@ -214,66 +214,74 @@ export default function TourListPage() {
                       <img 
                         src={tour.image} 
                         alt={tour.title}
-                        className="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
+                        className="w-full h-40 object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                       />
                     </div>
                     <Badge 
-                      className="absolute top-4 left-4 bg-white text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300"
+                      className="absolute top-2 left-2 bg-white text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 text-xs"
                     >
                       Salidas garantizadas
                     </Badge>
                     <Badge 
                       variant="destructive" 
-                      className="absolute top-4 right-4 group-hover:scale-110 transition-transform duration-300"
+                      className="absolute top-2 right-2 group-hover:scale-110 transition-transform duration-300 text-xs"
                     >
-                      Hasta {tour.discount} de descuento
+                      -{tour.discount}
                     </Badge>
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300">
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold mb-1 group-hover:text-primary transition-colors duration-300 line-clamp-1">
                       {tour.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-4 group-hover:text-gray-800 transition-colors duration-300">
+                    <p className="text-xs text-gray-600 mb-3 group-hover:text-gray-800 transition-colors duration-300 line-clamp-2">
                       {tour.description}
                     </p>
 
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-gray-600">Fechas de Viaje</div>
-                        <div className="font-semibold group-hover:text-primary transition-colors duration-300">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="text-gray-600">Fechas de Viaje</div>
+                        <div className="font-medium group-hover:text-primary transition-colors duration-300">
                           {tour.startDate}
                         </div>
                       </div>
 
-                      <div className="flex flex-wrap gap-2 mb-4">
+                      <div className="flex flex-wrap gap-1 mb-2">
                         {tour.tags.map((tag) => (
-                          <Badge key={tag} variant="outline" className="group-hover:border-primary group-hover:text-primary transition-colors duration-300">
+                          <Badge 
+                            key={tag} 
+                            variant="outline" 
+                            className="group-hover:border-primary group-hover:text-primary transition-colors duration-300 text-xs px-2 py-0"
+                          >
                             {tag}
                           </Badge>
                         ))}
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between mb-3">
                         <div>
-                          <div className="text-sm text-gray-600">Precio desde</div>
-                          <div className="text-xl font-bold text-primary group-hover:scale-105 transition-transform duration-300">
+                          <div className="text-[10px] text-gray-600">Precio desde</div>
+                          <div className="text-base font-bold text-primary group-hover:scale-105 transition-transform duration-300">
                             MXN$ {tour.price.toLocaleString()}
                           </div>
-                          <div className="text-sm line-through text-gray-400">
+                          <div className="text-xs line-through text-gray-400">
                             MXN$ {tour.originalPrice.toLocaleString()}
                           </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-2 gap-2">
                         <Button 
                           variant="outline"
-                          className="group-hover:border-primary group-hover:text-primary transition-colors duration-300"
+                          size="sm"
+                          className="group-hover:border-primary group-hover:text-primary transition-colors duration-300 text-xs h-8"
                         >
-                          Más información
+                          Más info
                         </Button>
-                        <Button className="group-hover:scale-105 transition-transform duration-300">
-                          Reservar ahora
+                        <Button 
+                          size="sm"
+                          className="group-hover:scale-105 transition-transform duration-300 text-xs h-8"
+                        >
+                          Reservar
                         </Button>
                       </div>
                     </div>
