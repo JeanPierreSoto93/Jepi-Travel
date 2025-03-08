@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Filter, SortAsc, ChevronLeft, ChevronRight, X, Search, Edit3 } from "lucide-react";
+import { Filter, SortAsc, X, Search, Edit3 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SearchForm } from "@/components/SearchForm";
 import {
@@ -25,7 +25,7 @@ const tours = [
     image: "https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=1740",
     discount: "20%",
     description: "Explora las majestuosas cascadas de Cuetzalan, incluyendo la famosa cascada Las Brisas y Velo de Novia.",
-    startDate: "15 Dic 2025",
+    startDate: "2025-12-15",
     price: 1899,
     originalPrice: 2375,
     tags: ["Aventura", "Naturaleza"]
@@ -36,7 +36,7 @@ const tours = [
     image: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?q=80&w=1740",
     discount: "15%",
     description: "Recorre el centro histórico de Cuetzalan, visita su iglesia principal y mercado de artesanías.",
-    startDate: "Jun - Sep 2025",
+    startDate: "2025-06-01",
     price: 2199,
     originalPrice: 2599,
     tags: ["Cultural", "Historia"]
@@ -47,7 +47,7 @@ const tours = [
     image: "https://images.unsplash.com/photo-1499915174960-6f5340157928?q=80&w=1740",
     discount: "25%",
     description: "Aventúrate en las misteriosas grutas de Cuetzalan y descubre sus formaciones geológicas.",
-    startDate: "Jun - Sep 2025",
+    startDate: "2025-06-01",
     price: 1699,
     originalPrice: 2265,
     tags: ["Aventura", "Naturaleza"]
@@ -201,28 +201,50 @@ const shimmerAnimation = `
 `;
 
 
+// Format date for display in a more compact way
+const formatDate = (dateString: string | null) => {
+  if (!dateString) return null;
+  return new Date(dateString).toLocaleDateString('es-MX', {
+    day: 'numeric',
+    month: 'short'
+  });
+};
+
 export default function TourListPage() {
   const [location] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [showSearchForm, setShowSearchForm] = useState(false);
   const searchParams = new URLSearchParams(location.split('?')[1]);
 
-  // Format date for display
-  const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Cualquier fecha';
-    return new Date(dateString).toLocaleDateString('es-MX', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
 
   const searchSummary = {
     destination: searchParams.get('destination') || 'Todos los destinos',
     startDate: formatDate(searchParams.get('startDate')),
     endDate: formatDate(searchParams.get('endDate')),
-    nights: searchParams.get('nights') || 'Cualquier duración',
-    guests: searchParams.get('guests') || 'Sin especificar'
+    nights: searchParams.get('nights') || null,
+    guests: searchParams.get('guests') || '2',
+    type: searchParams.get('type') || 'tours'
+  };
+
+  // Create compact search summary text
+  const getCompactSummary = () => {
+    let summary = searchSummary.destination;
+
+    if (searchSummary.startDate && searchSummary.endDate) {
+      summary += ` • ${searchSummary.startDate} - ${searchSummary.endDate}`;
+    } else if (searchSummary.startDate) {
+      summary += ` • ${searchSummary.startDate}`;
+    }
+
+    if (searchSummary.nights) {
+      summary += ` • ${searchSummary.nights}`;
+    }
+
+    if (searchSummary.guests) {
+      summary += ` • ${searchSummary.guests} ${parseInt(searchSummary.guests) === 1 ? 'viajero' : 'viajeros'}`;
+    }
+
+    return summary;
   };
 
   return (
@@ -247,29 +269,20 @@ export default function TourListPage() {
             </div>
           ) : (
             <div className="p-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-start sm:items-center gap-3 min-w-0">
-                  <Search className="h-4 w-4 text-primary mt-1 sm:mt-0 flex-shrink-0" />
-                  <div className="min-w-0">
-                    <h2 className="text-sm font-medium mb-1 sm:mb-0">Resultados de búsqueda</h2>
-                    <p className="text-sm text-gray-600 truncate">
-                      {searchSummary.destination} • 
-                      {searchParams.get('type') === 'hotels' ? ' Hotel' : ' Tour'} • 
-                      {searchSummary.startDate} • 
-                      {searchSummary.nights} • 
-                      {searchSummary.guests} {parseInt(searchSummary.guests) === 1 ? 'viajero' : 'viajeros'}
-                    </p>
-                  </div>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Search className="h-4 w-4 text-primary flex-shrink-0" />
+                  <p className="text-sm truncate">
+                    {getCompactSummary()}
+                  </p>
                 </div>
                 <Button 
-                  variant="outline"
-                  size="sm"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowSearchForm(true)}
-                  className="flex items-center gap-2 whitespace-nowrap flex-shrink-0"
+                  className="flex-shrink-0"
                 >
-                  <Edit3 className="h-3 w-3" />
-                  <span className="sm:inline hidden">Modificar búsqueda</span>
-                  <span className="sm:hidden inline">Modificar</span>
+                  <Edit3 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -362,7 +375,7 @@ export default function TourListPage() {
                         <div className="flex items-center justify-between text-xs">
                           <div className="text-gray-600">Fechas de Viaje</div>
                           <div className="font-medium">
-                            {tour.startDate}
+                            {formatDate(tour.startDate)}
                           </div>
                         </div>
 
