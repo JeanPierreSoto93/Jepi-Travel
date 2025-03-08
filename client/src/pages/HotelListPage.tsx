@@ -296,7 +296,7 @@ export default function HotelListPage() {
                           className="w-full h-full object-cover aspect-video md:aspect-square group-hover:scale-105 transition-transform duration-700"
                         />
                       </div>
-                      <Badge variant="destructive" className="absolute top-2 right-2">
+                      <Badge className="absolute top-2 right-2 bg-emerald-500 hover:bg-emerald-600">
                         -{hotel.discount}
                       </Badge>
                     </div>

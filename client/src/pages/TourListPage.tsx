@@ -200,7 +200,6 @@ const shimmerAnimation = `
   }
 `;
 
-
 // Format date for display in a more compact way
 const formatDate = (dateString: string | null) => {
   if (!dateString) return null;
@@ -356,10 +355,7 @@ export default function TourListPage() {
                           className="w-full h-40 object-cover transform group-hover:scale-105 transition-transform duration-700 ease-in-out"
                         />
                       </div>
-                      <Badge className="absolute top-2 left-2 bg-white text-primary text-xs">
-                        Salidas garantizadas
-                      </Badge>
-                      <Badge variant="destructive" className="absolute top-2 right-2 text-xs">
+                      <Badge className="absolute top-2 right-2 bg-emerald-500 hover:bg-emerald-600 text-xs">
                         -{tour.discount}
                       </Badge>
                     </div>
