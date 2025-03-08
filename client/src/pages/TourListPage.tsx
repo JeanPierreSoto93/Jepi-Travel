@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Filter, SortAsc, ChevronLeft, ChevronRight, X, Search, Edit3 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SearchForm } from "@/components/SearchForm";
 import {
   Sheet,
   SheetContent,
@@ -203,12 +204,25 @@ const shimmerAnimation = `
 export default function TourListPage() {
   const [location] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [showSearchForm, setShowSearchForm] = useState(false);
   const searchParams = new URLSearchParams(location.split('?')[1]);
 
-  const [, setLocation] = useLocation();
+  // Format date for display
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'Cualquier fecha';
+    return new Date(dateString).toLocaleDateString('es-MX', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
-  const handleEditSearch = () => {
-    setLocation("/");
+  const searchSummary = {
+    destination: searchParams.get('destination') || 'Todos los destinos',
+    startDate: formatDate(searchParams.get('startDate')),
+    endDate: formatDate(searchParams.get('endDate')),
+    nights: searchParams.get('nights') || 'Cualquier duración',
+    guests: searchParams.get('guests') || 'Sin especificar'
   };
 
   return (
@@ -216,28 +230,60 @@ export default function TourListPage() {
       <Navbar />
       <main className="flex-1 container mx-auto px-4 py-8">
         {/* Search Summary Box */}
-        <Card className="mb-8 p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Search className="h-5 w-5 text-primary" />
-              <div>
-                <h2 className="text-lg font-semibold mb-1">Resultados de búsqueda</h2>
-                <p className="text-sm text-gray-600">
-                  Destino: {searchParams.get('destination') || 'Todos los destinos'} •
-                  Fecha: {searchParams.get('startDate') ? new Date(searchParams.get('startDate')!).toLocaleDateString() : 'Cualquier fecha'} •
-                  Duración: {searchParams.get('nights') || 'Cualquier duración'}
-                </p>
+        <Card className="mb-8">
+          {showSearchForm ? (
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Modificar búsqueda</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSearchForm(false)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <SearchForm isInline={true} onSearch={() => setShowSearchForm(false)} />
+            </div>
+          ) : (
+            <div className="p-6">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div className="flex items-start lg:items-center gap-4">
+                  <Search className="h-5 w-5 text-primary mt-1 lg:mt-0" />
+                  <div>
+                    <h2 className="text-lg font-semibold mb-1">Resultados de búsqueda</h2>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <p>
+                        <span className="font-medium">Destino:</span> {searchSummary.destination}
+                      </p>
+                      <p>
+                        <span className="font-medium">Fecha de ida:</span> {searchSummary.startDate}
+                      </p>
+                      {searchSummary.endDate !== 'Cualquier fecha' && (
+                        <p>
+                          <span className="font-medium">Fecha de regreso:</span> {searchSummary.endDate}
+                        </p>
+                      )}
+                      <p>
+                        <span className="font-medium">Duración:</span> {searchSummary.nights}
+                      </p>
+                      <p>
+                        <span className="font-medium">Viajeros:</span> {searchSummary.guests}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowSearchForm(true)}
+                  className="flex items-center gap-2 whitespace-nowrap"
+                >
+                  <Edit3 className="h-4 w-4" />
+                  Modificar búsqueda
+                </Button>
               </div>
             </div>
-            <Button
-              variant="outline"
-              onClick={handleEditSearch}
-              className="flex items-center gap-2"
-            >
-              <Edit3 className="h-4 w-4" />
-              Editar búsqueda
-            </Button>
-          </div>
+          )}
         </Card>
 
         <div className="flex flex-col lg:flex-row gap-8">

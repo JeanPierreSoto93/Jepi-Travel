@@ -12,12 +12,12 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
-const searchTypes = [
-  { icon: MapPin, label: "Tours", value: "tours" },
-  { icon: Building2, label: "Hoteles", value: "hotels" }
-];
+interface SearchFormProps {
+  isInline?: boolean;
+  onSearch?: () => void;
+}
 
-export function SearchForm() {
+export function SearchForm({ isInline = false, onSearch }: SearchFormProps) {
   const [, setLocation] = useLocation();
   const [destination, setDestination] = useState("");
   const [startDate, setStartDate] = useState<Date>();
@@ -33,17 +33,31 @@ export function SearchForm() {
     if (nights) searchParams.set('nights', nights);
 
     setLocation(`/tours?${searchParams.toString()}`);
+
+    if (onSearch) {
+      onSearch();
+    }
   };
 
+  const containerClass = isInline 
+    ? "" 
+    : "container mx-auto px-4 -mt-16 relative z-10";
+
+  const formClass = isInline
+    ? "bg-transparent shadow-none p-0"
+    : "bg-white rounded-lg shadow-lg p-6";
+
   return (
-    <div className="container mx-auto px-4 -mt-16 relative z-10">
+    <div className={containerClass}>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={isInline ? false : { opacity: 0, y: 20 }}
+        animate={isInline ? false : { opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="bg-white rounded-lg shadow-lg p-6"
+        className={formClass}
       >
-        <h2 className="text-xl font-semibold mb-4">Encuentra tu próximo destino</h2>
+        {!isInline && (
+          <h2 className="text-xl font-semibold mb-4">Encuentra tu próximo destino</h2>
+        )}
 
         <Tabs defaultValue="tours" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
@@ -209,3 +223,8 @@ export function SearchForm() {
     </div>
   );
 }
+
+const searchTypes = [
+  { icon: MapPin, label: "Tours", value: "tours" },
+  { icon: Building2, label: "Hoteles", value: "hotels" }
+];
