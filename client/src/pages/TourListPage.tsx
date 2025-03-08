@@ -16,21 +16,40 @@ import {
 } from "@/components/ui/sheet";
 
 // Mock tours data
-const mockTours = [
+const tours = [
   {
     id: 1,
     title: "Cascadas de Cuetzalan",
     image: "https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=1740",
+    discount: "20%",
     description: "Explora las majestuosas cascadas de Cuetzalan, incluyendo la famosa cascada Las Brisas y Velo de Novia.",
-    duration: "1 día",
+    startDate: "15 Dic 2025",
     price: 1899,
     originalPrice: 2375,
-    rating: 4.8,
-    reviews: 128,
-    discount: "20%",
     tags: ["Aventura", "Naturaleza"]
   },
-  // Add more mock tours...
+  {
+    id: 2,
+    title: "Centro Histórico y Artesanías",
+    image: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?q=80&w=1740",
+    discount: "15%",
+    description: "Recorre el centro histórico de Cuetzalan, visita su iglesia principal y mercado de artesanías.",
+    startDate: "Jun - Sep 2025",
+    price: 2199,
+    originalPrice: 2599,
+    tags: ["Cultural", "Historia"]
+  },
+  {
+    id: 3,
+    title: "Grutas de Cuetzalan",
+    image: "https://images.unsplash.com/photo-1499915174960-6f5340157928?q=80&w=1740",
+    discount: "25%",
+    description: "Aventúrate en las misteriosas grutas de Cuetzalan y descubre sus formaciones geológicas.",
+    startDate: "Jun - Sep 2025",
+    price: 1699,
+    originalPrice: 2265,
+    tags: ["Aventura", "Naturaleza"]
+  }
 ];
 
 const FilterContent = () => (
@@ -141,9 +160,9 @@ export default function TourListPage() {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Desktop Filters Sidebar */}
-          <div className={`hidden lg:block ${showDesktopFilters ? 'lg:w-1/4' : 'lg:w-auto'}`}>
+          <div className={`hidden lg:block transition-all duration-300 ${showDesktopFilters ? 'lg:w-1/4' : 'lg:w-auto'}`}>
             <div className="sticky top-4">
-              <Card className={`${showDesktopFilters ? 'p-6' : 'p-2'}`}>
+              <Card className={`transition-all duration-300 ${showDesktopFilters ? 'p-6' : 'p-2'}`}>
                 <div className="flex items-center justify-between mb-4">
                   {showDesktopFilters && (
                     <div className="flex items-center gap-2">
@@ -152,12 +171,12 @@ export default function TourListPage() {
                     </div>
                   )}
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="icon"
                     onClick={() => setShowDesktopFilters(!showDesktopFilters)}
-                    className="ml-auto"
+                    className={`transition-transform duration-300 ${!showDesktopFilters ? 'rotate-180 hover:bg-primary hover:text-white' : ''}`}
                   >
-                    {showDesktopFilters ? <ChevronLeft /> : <ChevronRight />}
+                    <ChevronLeft className="h-4 w-4" />
                   </Button>
                 </div>
 
@@ -167,10 +186,10 @@ export default function TourListPage() {
           </div>
 
           {/* Tour Listings */}
-          <div className={`flex-1 ${showDesktopFilters ? 'lg:w-3/4' : 'lg:w-full'}`}>
+          <div className={`flex-1 transition-all duration-300 ${showDesktopFilters ? 'lg:w-3/4' : 'lg:w-full'}`}>
             {/* Sort Controls */}
             <div className="flex items-center justify-between mb-6">
-              <p className="text-gray-600">{mockTours.length} tours encontrados</p>
+              <p className="text-gray-600">{tours.length} tours encontrados</p>
               <div className="flex items-center gap-2">
                 <SortAsc className="h-5 w-5 text-gray-400" />
                 <select className="border rounded-md px-2 py-1">
@@ -182,56 +201,80 @@ export default function TourListPage() {
               </div>
             </div>
 
-            {/* Tour Cards */}
-            <div className="space-y-6">
-              {mockTours.map((tour) => (
-                <Card key={tour.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/3">
+            {/* Tour Cards Grid */}
+            <div className={`grid gap-6 ${
+              showDesktopFilters
+                ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+            }`}>
+              {tours.map((tour) => (
+                <Card key={tour.id} className="overflow-hidden group hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
+                  <div className="relative">
+                    <div className="overflow-hidden">
                       <img 
                         src={tour.image} 
                         alt={tour.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                       />
                     </div>
-                    <div className="p-6 md:w-2/3">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="text-xl font-semibold mb-2">{tour.title}</h3>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-yellow-500">★</span>
-                            <span className="font-medium">{tour.rating}</span>
-                            <span className="text-gray-500">({tour.reviews} reseñas)</span>
-                          </div>
-                        </div>
-                        <Badge variant="destructive">
-                          {tour.discount} OFF
-                        </Badge>
-                      </div>
+                    <Badge 
+                      className="absolute top-4 left-4 bg-white text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300"
+                    >
+                      Salidas garantizadas
+                    </Badge>
+                    <Badge 
+                      variant="destructive" 
+                      className="absolute top-4 right-4 group-hover:scale-110 transition-transform duration-300"
+                    >
+                      Hasta {tour.discount} de descuento
+                    </Badge>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300">
+                      {tour.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-4 group-hover:text-gray-800 transition-colors duration-300">
+                      {tour.description}
+                    </p>
 
-                      <p className="text-gray-600 mb-4">{tour.description}</p>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="text-sm text-gray-600">Fechas de Viaje</div>
+                        <div className="font-semibold group-hover:text-primary transition-colors duration-300">
+                          {tour.startDate}
+                        </div>
+                      </div>
 
                       <div className="flex flex-wrap gap-2 mb-4">
                         {tour.tags.map((tag) => (
-                          <Badge key={tag} variant="outline">
+                          <Badge key={tag} variant="outline" className="group-hover:border-primary group-hover:text-primary transition-colors duration-300">
                             {tag}
                           </Badge>
                         ))}
                       </div>
 
-                      <div className="flex items-end justify-between">
+                      <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-gray-500">Duración: {tour.duration}</p>
-                          <div className="mt-1">
-                            <span className="text-2xl font-bold text-primary">
-                              MXN ${tour.price.toLocaleString()}
-                            </span>
-                            <span className="ml-2 text-sm line-through text-gray-400">
-                              MXN ${tour.originalPrice.toLocaleString()}
-                            </span>
+                          <div className="text-sm text-gray-600">Precio desde</div>
+                          <div className="text-xl font-bold text-primary group-hover:scale-105 transition-transform duration-300">
+                            MXN$ {tour.price.toLocaleString()}
+                          </div>
+                          <div className="text-sm line-through text-gray-400">
+                            MXN$ {tour.originalPrice.toLocaleString()}
                           </div>
                         </div>
-                        <Button>Ver detalles</Button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <Button 
+                          variant="outline"
+                          className="group-hover:border-primary group-hover:text-primary transition-colors duration-300"
+                        >
+                          Más información
+                        </Button>
+                        <Button className="group-hover:scale-105 transition-transform duration-300">
+                          Reservar ahora
+                        </Button>
                       </div>
                     </div>
                   </div>
