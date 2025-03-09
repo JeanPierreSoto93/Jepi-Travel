@@ -6,17 +6,19 @@ import {
   ShoppingBag, 
   UserCircle2,
   Phone,
+  Search
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Navbar() {
   const navItems = [
-    { icon: MapPin, label: "Tours Cuetzalan" },
-    { icon: Building2, label: "Hoteles" },
-    { icon: Package, label: "Experiencias" },
-    { icon: ShoppingBag, label: "Paquetes" },
-    { icon: UserCircle2, label: "Guías locales" }
+    { icon: MapPin, label: "Tours Cuetzalan", href: "/tours" },
+    { icon: Building2, label: "Hoteles", href: "/hotels" },
+    { icon: Package, label: "Experiencias", href: "/experiencias" },
+    { icon: ShoppingBag, label: "Paquetes", href: "/paquetes" },
+    { icon: UserCircle2, label: "Guías locales", href: "/guias" },
+    { icon: Search, label: "Buscar Reserva", href: "/buscar-reserva" }
   ];
 
   return (
@@ -41,10 +43,10 @@ export function Navbar() {
         {/* Navigation */}
         <nav className="flex items-center justify-between py-4 overflow-x-auto">
           <div className="flex items-center gap-6">
-            {navItems.map((item, index) => (
+            {navItems.map((item) => (
               <Link
-                key={index}
-                href={`/${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                key={item.href}
+                href={item.href}
                 className="flex flex-col items-center gap-1 text-gray-600 hover:text-primary transition-colors min-w-[80px]"
               >
                 <item.icon className="h-5 w-5" />

@@ -10,6 +10,7 @@ import HotelDetailPage from "@/pages/HotelDetailPage";
 import TourDetailPage from "@/pages/TourDetailPage";
 import PaymentPage from "@/pages/PaymentPage";
 import ConfirmationPage from "@/pages/ConfirmationPage";
+import ReservationLookupPage from "@/pages/ReservationLookupPage";
 
 function Router() {
   return (
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/tours/:id" component={TourDetailPage} />
       <Route path="/payment" component={PaymentPage} />
       <Route path="/confirmation/:id" component={ConfirmationPage} />
+      <Route path="/buscar-reserva" component={ReservationLookupPage} />
       <Route component={NotFound} />
     </Switch>
   );
