@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ShareButtons } from "@/components/ShareButtons";
+import { RoomGalleryModal } from "@/components/RoomGalleryModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -17,12 +18,13 @@ import {
   Phone,
   Clock,
   Calendar,
-  Users
+  Users,
+  Maximize2
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { SearchForm } from "@/components/SearchForm";
 
-// Mock hotel data (replace with actual data fetching)
+// Updated mock hotel data with additional room information
 const hotel = {
   id: 1,
   name: "Hotel Boutique Cuetzalan",
@@ -48,11 +50,30 @@ const hotel = {
     {
       id: 1,
       name: "Junior Suite King Bed",
-      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1740",
+      description: "Espaciosa suite con elegante decoración, perfecta para parejas o familias pequeñas. Disfrute de vistas panorámicas y todas las comodidades modernas.",
+      images: [
+        "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1740",
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1740",
+        "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=1740",
+      ],
       size: "35 metros cuadrados",
       bedType: "1 cama King y 1 cama plegable individual",
       maxGuests: 3,
-      amenities: ["Todo incluido", "Estacionamiento gratis", "WiFi gratis"],
+      amenities: [
+        "Todo incluido",
+        "Estacionamiento gratis",
+        "WiFi gratis",
+        "Aire acondicionado",
+        "TV de pantalla plana",
+        "Minibar"
+      ],
+      features: [
+        "Vista al jardín",
+        "Balcón privado",
+        "Baño completo con ducha",
+        "Área de trabajo",
+        "Caja fuerte"
+      ],
       price: 1691,
       taxesAndFees: 305,
       isRefundable: true,
@@ -63,11 +84,26 @@ const hotel = {
     {
       id: 2,
       name: "Habitación Estándar",
-      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1740",
+      description: "Confortable habitación con todas las comodidades esenciales para una estancia placentera.",
+      images: [
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1740",
+        "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1740",
+        "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=1740",
+      ],
       size: "25 metros cuadrados",
       bedType: "1 cama King y 1 cama plegable individual",
       maxGuests: 2,
-      amenities: ["Estacionamiento gratis", "WiFi gratis"],
+      amenities: [
+        "Estacionamiento gratis",
+        "WiFi gratis",
+        "Aire acondicionado",
+        "TV de pantalla plana"
+      ],
+      features: [
+        "Vista a la ciudad",
+        "Baño completo",
+        "Escritorio"
+      ],
       price: 1097,
       taxesAndFees: 198,
       isRefundable: true,
@@ -78,11 +114,30 @@ const hotel = {
     {
       id: 3,
       name: "Suite Ejecutiva con Vista",
-      image: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1740",
+      description: "Lujosa suite con impresionantes vistas y amenidades premium para una experiencia excepcional.",
+      images: [
+        "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?q=80&w=1740",
+        "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1740",
+        "https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?q=80&w=1740",
+      ],
       size: "45 metros cuadrados",
       bedType: "1 cama King size",
       maxGuests: 2,
-      amenities: ["Vista al mar", "Balcón privado", "Minibar", "WiFi gratis"],
+      amenities: [
+        "Vista al mar",
+        "Balcón privado",
+        "Minibar",
+        "WiFi gratis",
+        "Servicio a la habitación 24/7",
+        "Amenidades premium"
+      ],
+      features: [
+        "Sala de estar separada",
+        "Vestidor",
+        "Bañera de hidromasaje",
+        "Cafetera Nespresso",
+        "Sistema de sonido"
+      ],
       price: 2299,
       taxesAndFees: 415,
       isRefundable: true,
@@ -112,6 +167,8 @@ export default function HotelDetailPage() {
   const params = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [availableRooms, setAvailableRooms] = useState(hotel.rooms);
+  const [selectedRoom, setSelectedRoom] = useState<typeof hotel.rooms[0] | null>(null);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   const handleSearch = (searchParams: any) => {
     setIsLoading(true);
@@ -122,6 +179,11 @@ export default function HotelDetailPage() {
       setAvailableRooms(filteredRooms);
       setIsLoading(false);
     }, 1500);
+  };
+
+  const openGallery = (room: typeof hotel.rooms[0]) => {
+    setSelectedRoom(room);
+    setIsGalleryOpen(true);
   };
 
   const RoomSkeleton = () => (
@@ -237,13 +299,21 @@ export default function HotelDetailPage() {
                   <Card key={room.id} className="flex flex-col">
                     <div className="relative">
                       <img
-                        src={room.image}
+                        src={room.images[0]}
                         alt={room.name}
                         className="w-full h-48 object-cover rounded-t-lg"
                       />
                       <div className="absolute top-2 right-2 px-2 py-1 bg-blue-900 text-white rounded">
                         <span className="font-bold">{room.rating}</span>
                       </div>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="absolute bottom-2 right-2 bg-white/90 hover:bg-white"
+                        onClick={() => openGallery(room)}
+                      >
+                        <Maximize2 className="h-4 w-4" />
+                      </Button>
                     </div>
                     <div className="p-4 flex-1 flex flex-col">
                       <h3 className="text-lg font-semibold mb-1">{room.name}</h3>
@@ -256,11 +326,16 @@ export default function HotelDetailPage() {
                         </div>
 
                         <div className="flex flex-wrap gap-1">
-                          {room.amenities.map((amenity, index) => (
+                          {room.amenities.slice(0, 3).map((amenity, index) => (
                             <Badge key={index} variant="outline" className="text-xs">
                               {amenity}
                             </Badge>
                           ))}
+                          {room.amenities.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{room.amenities.length - 3} más
+                            </Badge>
+                          )}
                         </div>
                       </div>
 
@@ -292,6 +367,14 @@ export default function HotelDetailPage() {
         </div>
       </main>
       <Footer />
+
+      {selectedRoom && (
+        <RoomGalleryModal
+          isOpen={isGalleryOpen}
+          onClose={() => setIsGalleryOpen(false)}
+          room={selectedRoom}
+        />
+      )}
     </div>
   );
 }
