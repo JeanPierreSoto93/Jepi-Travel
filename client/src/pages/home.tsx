@@ -74,17 +74,17 @@ export default function Home() {
             </SelectContent>
           </Select>
           <Select value={searchType} onValueChange={setSearchType}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona tipo de búsqueda" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {searchTypes.map((type) => (
-                        <SelectItem key={type.id} value={type.id}>
-                          {type.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecciona tipo de búsqueda" />
+            </SelectTrigger>
+            <SelectContent>
+              {searchTypes.map((type) => (
+                <SelectItem key={type.id} value={type.id}>
+                  {type.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -165,16 +165,18 @@ export default function Home() {
       <main>
         {/* Hero Section with Search */}
         <div className="relative h-[600px] flex items-center justify-center">
-          {/* Background Image */}
+          {/* Background Image with Overlay */}
           <div 
             className="absolute inset-0 z-0"
             style={{
-              backgroundImage: "url('https://images.unsplash.com/photo-1682686580433-c4c4e9d8c515?q=80&w=1920&auto=format')",
+              backgroundImage: "url('https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?q=80&w=1920&auto=format')",
               backgroundSize: "cover",
               backgroundPosition: "center",
-              filter: "brightness(0.7)"
             }}
-          />
+          >
+            {/* Dark gradient overlay for better text readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/50" />
+          </div>
 
           {/* Content */}
           <div className="relative z-10 w-full max-w-4xl mx-auto px-4">
@@ -185,11 +187,12 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="text-white text-center mb-8"
             >
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">
                 Descubre Cuetzalan
               </h1>
-              <p className="text-xl md:text-2xl opacity-90">
-                Explora la magia de este pueblo mágico
+              <p className="text-xl md:text-2xl text-white/90 font-medium drop-shadow-md max-w-2xl mx-auto">
+                Explora uno de los pueblos mágicos más hermosos de México, 
+                donde la tradición y la naturaleza se encuentran
               </p>
             </motion.div>
 
@@ -198,7 +201,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white rounded-lg shadow-xl p-6"
+              className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-6"
             >
               <Tabs defaultValue="tours" value={searchType} onValueChange={setSearchType}>
                 <TabsList className="grid w-full grid-cols-3 mb-6">
