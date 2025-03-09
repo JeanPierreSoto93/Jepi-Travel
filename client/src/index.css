@@ -47,6 +47,30 @@
   .border-primary {
     border-color: hsl(var(--primary));
   }
+
+  .hover\:bg-primary:hover {
+    background-color: hsl(var(--primary));
+  }
+
+  .hover\:text-primary:hover {
+    color: hsl(var(--primary));
+  }
+
+  .hover\:border-primary:hover {
+    border-color: hsl(var(--primary));
+  }
+
+  .bg-accent {
+    background-color: hsl(var(--accent));
+  }
+
+  .text-accent {
+    color: hsl(var(--accent));
+  }
+
+  .border-accent {
+    border-color: hsl(var(--accent));
+  }
 }
 
 @keyframes shimmer {
