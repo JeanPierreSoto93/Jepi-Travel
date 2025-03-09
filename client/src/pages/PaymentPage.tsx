@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
@@ -18,6 +18,7 @@ export default function PaymentPage() {
   const [, setLocation] = useLocation();
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [clientSecret, setClientSecret] = useState("");
 
   // Mock booking data (replace with actual data from state management)
   const booking = {
@@ -34,9 +35,29 @@ export default function PaymentPage() {
     image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1740",
   };
 
+  useEffect(() => {
+    if (paymentMethod === "card") {
+      // Create PaymentIntent as soon as the page loads
+      fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: booking.total }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.clientSecret) {
+            setClientSecret(data.clientSecret);
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  }, [paymentMethod, booking.total]);
+
   const handlePayment = async () => {
     setIsProcessing(true);
-    
+
     if (paymentMethod === "destination") {
       // Generate reservation without payment
       setTimeout(() => {
@@ -110,9 +131,9 @@ export default function PaymentPage() {
                   </div>
                 </RadioGroup>
 
-                {paymentMethod === "card" && (
+                {paymentMethod === "card" && clientSecret && (
                   <div className="mt-6">
-                    <Elements stripe={stripePromise}>
+                    <Elements stripe={stripePromise} options={{ clientSecret }}>
                       <PaymentElement />
                     </Elements>
                   </div>
