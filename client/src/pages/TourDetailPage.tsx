@@ -18,8 +18,9 @@ import {
   Coffee
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useState } from 'react';
 
-// Mock tour data (replace with actual data fetching)
+// Add more images to the mock tour data
 const tour = {
   id: 1,
   title: "Cascadas de Cuetzalan",
@@ -67,16 +68,39 @@ const tour = {
       activity: "Regreso al punto de partida"
     }
   ],
-  additionalImages: [
-    "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?q=80&w=1740",
-    "https://images.unsplash.com/photo-1499915174960-6f5340157928?q=80&w=1740",
-    "https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=1740",
+  images: [
+    {
+      url: "https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=1740",
+      description: "Vista panorámica de la cascada principal"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1518105779142-d975f22f1b0a?q=80&w=1740",
+      description: "Sendero entre la vegetación"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1499915174960-6f5340157928?q=80&w=1740",
+      description: "Formaciones rocosas en la cascada"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1740",
+      description: "Vista desde lo alto de la cascada"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1740",
+      description: "Paisaje natural del entorno"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?q=80&w=1740",
+      description: "Amanecer en Cuetzalan"
+    }
   ]
 };
 
 export default function TourDetailPage() {
   const params = useParams();
   const [, setLocation] = useLocation();
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -107,10 +131,43 @@ export default function TourDetailPage() {
                 />
               </div>
 
-              {/* Image Gallery */}
-              <ImageGallery mainImage={tour.image} additionalImages={tour.additionalImages} />
+              {/* Image Gallery Grid */}
+              <div className="relative overflow-hidden rounded-lg">
+                <div className="aspect-w-16 aspect-h-9">
+                  <img
+                    src={tour.images[selectedImage].url}
+                    alt={tour.images[selectedImage].description}
+                    className="object-cover w-full h-full rounded-lg cursor-pointer"
+                    onClick={() => setIsGalleryOpen(true)}
+                  />
+                </div>
+                <div className="grid grid-cols-5 gap-2 mt-2">
+                  {tour.images.slice(0, 5).map((image, index) => (
+                    <div
+                      key={index}
+                      className={`aspect-w-4 aspect-h-3 cursor-pointer overflow-hidden rounded-lg 
+                        ${selectedImage === index ? 'ring-2 ring-primary' : ''}`}
+                      onClick={() => setSelectedImage(index)}
+                    >
+                      <img
+                        src={image.url}
+                        alt={image.description}
+                        className="object-cover w-full h-full hover:opacity-75 transition-opacity"
+                      />
+                      {index === 4 && tour.images.length > 5 && (
+                        <div
+                          className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white"
+                          onClick={() => setIsGalleryOpen(true)}
+                        >
+                          +{tour.images.length - 5}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-              {/* Tour Overview */}
+
               <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Descripción del tour</h2>
                 <p className="text-gray-600 mb-6">{tour.description}</p>
@@ -139,7 +196,6 @@ export default function TourDetailPage() {
                 </div>
               </Card>
 
-              {/* Itinerary */}
               <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Itinerario</h2>
                 <div className="space-y-4">
@@ -160,7 +216,6 @@ export default function TourDetailPage() {
                 </div>
               </Card>
 
-              {/* Included Items */}
               <Card className="p-6">
                 <h2 className="text-xl font-semibold mb-4">¿Qué está incluido?</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -238,6 +293,15 @@ export default function TourDetailPage() {
         </div>
       </main>
       <Footer />
+
+      {/* Full Image Gallery Modal */}
+      {isGalleryOpen && (
+        <ImageGallery
+          images={tour.images}
+          onClose={() => setIsGalleryOpen(false)}
+          initialIndex={selectedImage}
+        />
+      )}
     </div>
   );
 }

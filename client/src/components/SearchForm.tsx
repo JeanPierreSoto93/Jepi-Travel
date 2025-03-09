@@ -214,6 +214,7 @@ export function SearchForm({ isInline = false, onSearch, searchType = "both" }: 
                 selected={endDate}
                 onSelect={setEndDate}
                 initialFocus
+                disabled={(date) => date < (startDate || new Date())}
               />
             </PopoverContent>
           </Popover>
