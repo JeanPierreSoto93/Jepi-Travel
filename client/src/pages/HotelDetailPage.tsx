@@ -301,20 +301,16 @@ export default function HotelDetailPage() {
                       <img
                         src={room.images[0]}
                         alt={room.name}
-                        className="w-full h-48 object-cover rounded-t-lg"
+                        className="w-full h-48 object-cover rounded-t-lg cursor-pointer"
+                        onClick={() => openGallery(room)}
                       />
                       <div className="absolute top-2 right-2 px-2 py-1 bg-blue-900 text-white rounded">
                         <span className="font-bold">{room.rating}</span>
                       </div>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        className="absolute bottom-2 right-2 rounded-full bg-black/75 hover:bg-black/90 text-white p-2 flex items-center gap-1.5"
-                        onClick={() => openGallery(room)}
-                      >
-                        <span className="text-sm font-medium">{room.images.length}</span>
+                      <div className="absolute bottom-2 right-2 rounded-full bg-black/75 text-white px-2 py-1 text-sm flex items-center gap-1">
+                        <span>{room.images.length}</span>
                         <Maximize2 className="h-4 w-4" />
-                      </Button>
+                      </div>
                     </div>
                     <div className="p-4 flex-1 flex flex-col">
                       <h3 className="text-lg font-semibold mb-1">{room.name}</h3>
