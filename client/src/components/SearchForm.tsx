@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { MapPin, Building2, Calendar as CalendarIcon } from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
@@ -15,7 +13,6 @@ import { cn } from "@/lib/utils";
 interface SearchFormProps {
   isInline?: boolean;
   onSearch?: (searchParams: any) => void;
-  searchType?: "hotels" | "tours" | "both";
   initialStartDate?: string;
   initialEndDate?: string;
   initialGuests?: number;
@@ -25,7 +22,6 @@ interface SearchFormProps {
 export function SearchForm({ 
   isInline = false, 
   onSearch, 
-  searchType = "both",
   initialStartDate,
   initialEndDate,
   initialGuests = 2,
@@ -41,7 +37,6 @@ export function SearchForm({
     initialEndDate ? new Date(initialEndDate) : undefined
   );
   const [guests, setGuests] = useState(String(initialGuests));
-  const [activeType, setActiveType] = useState(searchType === "both" ? "tours" : searchType);
 
   const handleSearch = () => {
     // Prepare search parameters
@@ -49,8 +44,7 @@ export function SearchForm({
       startDate,
       endDate,
       guests: Number(guests),
-      rooms: initialRooms,
-      type: activeType
+      rooms: initialRooms
     };
 
     // If onSearch prop is provided, use that instead of navigation
@@ -63,11 +57,7 @@ export function SearchForm({
       if (endDate) urlParams.set('endDate', endDate.toISOString());
       if (guests) urlParams.set('guests', guests);
       if (initialRooms) urlParams.set('rooms', String(initialRooms));
-      urlParams.set('type', activeType);
-
-      // Redirect to the appropriate page
-      const route = activeType === 'hotels' ? '/hotels' : '/tours';
-      setLocation(`${route}?${urlParams.toString()}`);
+      setLocation(`${location}?${urlParams.toString()}`);
     }
   };
 
@@ -79,17 +69,21 @@ export function SearchForm({
     ? "bg-transparent shadow-none p-0"
     : "bg-white rounded-lg shadow-lg p-6";
 
-  const searchTypes = [
-    { icon: MapPin, label: "Tours", value: "tours" },
-    { icon: Building2, label: "Hoteles", value: "hotels" }
-  ];
+  return (
+    <div className={containerClass}>
+      <motion.div
+        initial={isInline ? false : { opacity: 0, y: 20 }}
+        animate={isInline ? false : { opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className={formClass}
+      >
+        {!isInline && (
+          <h2 className="text-xl font-semibold mb-4">Encuentra tu próxima aventura</h2>
+        )}
 
-  const renderSearchContent = (type: "hotels" | "tours") => {
-    if (type === "tours") {
-      return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Fecha de salida</label>
+            <label className="text-sm text-gray-600">Fecha de entrada</label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -115,7 +109,7 @@ export function SearchForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Fecha de regreso</label>
+            <label className="text-sm text-gray-600">Fecha de salida</label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
@@ -142,138 +136,22 @@ export function SearchForm({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Número de personas</label>
+            <label className="text-sm text-gray-600">Huéspedes</label>
             <Select value={guests} onValueChange={setGuests}>
               <SelectTrigger>
-                <SelectValue placeholder="Selecciona personas" />
+                <SelectValue placeholder="Número de huéspedes" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">1 persona</SelectItem>
-                <SelectItem value="2">2 personas</SelectItem>
-                <SelectItem value="3">3 personas</SelectItem>
-                <SelectItem value="4">4 personas</SelectItem>
-                <SelectItem value="5">5 personas</SelectItem>
-                <SelectItem value="6">6+ personas</SelectItem>
+                <SelectItem value="1">1 huésped</SelectItem>
+                <SelectItem value="2">2 huéspedes</SelectItem>
+                <SelectItem value="3">3 huéspedes</SelectItem>
+                <SelectItem value="4">4 huéspedes</SelectItem>
+                <SelectItem value="5">5 huéspedes</SelectItem>
+                <SelectItem value="6">6+ huéspedes</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
-      );
-    }
-
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="space-y-2">
-          <label className="text-sm text-gray-600">Check-in</label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !startDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, "PPP", { locale: es }) : <span>Fecha de entrada</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setStartDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm text-gray-600">Check-out</label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !endDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, "PPP", { locale: es }) : <span>Fecha de salida</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={setEndDate}
-                initialFocus
-                disabled={(date) => date < (startDate || new Date())}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm text-gray-600">Huéspedes</label>
-          <Select value={guests} onValueChange={setGuests}>
-            <SelectTrigger>
-              <SelectValue placeholder="Número de huéspedes" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1 huésped</SelectItem>
-              <SelectItem value="2">2 huéspedes</SelectItem>
-              <SelectItem value="3">3 huéspedes</SelectItem>
-              <SelectItem value="4">4 huéspedes</SelectItem>
-              <SelectItem value="5">5 huéspedes</SelectItem>
-              <SelectItem value="6">6+ huéspedes</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div className={containerClass}>
-      <motion.div
-        initial={isInline ? false : { opacity: 0, y: 20 }}
-        animate={isInline ? false : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={formClass}
-      >
-        {!isInline && (
-          <h2 className="text-xl font-semibold mb-4">Encuentra tu próximo destino</h2>
-        )}
-
-        {searchType === "both" ? (
-          <Tabs value={activeType} onValueChange={setActiveType} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-6">
-              {searchTypes.map((type) => (
-                <TabsTrigger
-                  key={type.value}
-                  value={type.value}
-                  className="flex items-center gap-2"
-                >
-                  <type.icon className="h-4 w-4" />
-                  <span>{type.label}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            <TabsContent value="tours" className="mt-0">
-              {renderSearchContent("tours")}
-            </TabsContent>
-
-            <TabsContent value="hotels" className="mt-0">
-              {renderSearchContent("hotels")}
-            </TabsContent>
-          </Tabs>
-        ) : (
-          renderSearchContent(searchType as "hotels" | "tours")
-        )}
 
         <div className="mt-6 flex justify-end">
           <Button onClick={handleSearch}>
