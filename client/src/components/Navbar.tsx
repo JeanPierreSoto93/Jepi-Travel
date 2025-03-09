@@ -3,21 +3,17 @@ import {
   MapPin, 
   Building2, 
   Package, 
-  ShoppingBag, 
-  UserCircle2,
+  Search,
   Phone,
-  Search
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Navbar() {
   const navItems = [
-    { icon: MapPin, label: "Tours Cuetzalan", href: "/tours" },
+    { icon: MapPin, label: "Tours", href: "/tours" },
     { icon: Building2, label: "Hoteles", href: "/hotels" },
-    { icon: Package, label: "Experiencias", href: "/experiencias" },
-    { icon: ShoppingBag, label: "Paquetes", href: "/paquetes" },
-    { icon: UserCircle2, label: "Guías locales", href: "/guias" },
+    { icon: Package, label: "Paquetes", href: "/packages" },
     { icon: Search, label: "Buscar Reserva", href: "/buscar-reserva" }
   ];
 
