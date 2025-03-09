@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -6,10 +7,15 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import {
   MapPin,
   Clock,
-  Calendar,
+  Calendar as CalendarIcon,
   Users,
   Star,
   Compass,
@@ -18,7 +24,7 @@ import {
   Coffee
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { useState } from 'react';
+import { cn } from "@/lib/utils";
 
 // Add more images to the mock tour data
 const tour = {
@@ -101,6 +107,31 @@ export default function TourDetailPage() {
   const [, setLocation] = useLocation();
   const [selectedImage, setSelectedImage] = useState(0);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+
+  // Get URL parameters
+  const searchParams = new URLSearchParams(window.location.search);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    searchParams.get("startDate") ? new Date(searchParams.get("startDate")!) : undefined
+  );
+  const [guestCount, setGuestCount] = useState(searchParams.get("guests") || "2");
+
+  const handleSearch = () => {
+    // Get current search params from URL
+    const currentParams = new URLSearchParams(window.location.search);
+
+    // Update search parameters
+    if (selectedDate) {
+      currentParams.set('startDate', selectedDate.toISOString());
+    }
+    currentParams.set('guests', guestCount);
+    currentParams.set('type', 'tour');
+    currentParams.set('name', tour.title);
+    currentParams.set('image', tour.image);
+    currentParams.set('price', tour.price.toString());
+    currentParams.set('tourId', params.id);
+
+    setLocation(`/payment?${currentParams.toString()}`);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -250,35 +281,56 @@ export default function TourDetailPage() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-sm text-gray-600">Fecha del tour</label>
-                      <Button variant="outline" className="w-full">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Seleccionar fecha
-                      </Button>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full justify-start text-left font-normal",
+                              !selectedDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {selectedDate ? (
+                              format(selectedDate, "PPP", { locale: es })
+                            ) : (
+                              <span>Seleccionar fecha</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={setSelectedDate}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
 
                     <div className="space-y-2">
                       <label className="text-sm text-gray-600">Número de personas</label>
-                      <Button variant="outline" className="w-full justify-between">
-                        2 personas
-                        <span className="text-gray-400">▼</span>
-                      </Button>
+                      <Select value={guestCount} onValueChange={setGuestCount}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona número de personas" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1">1 persona</SelectItem>
+                          <SelectItem value="2">2 personas</SelectItem>
+                          <SelectItem value="3">3 personas</SelectItem>
+                          <SelectItem value="4">4 personas</SelectItem>
+                          <SelectItem value="5">5 personas</SelectItem>
+                          <SelectItem value="6">6+ personas</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <Button
                     className="w-full"
                     size="lg"
-                    onClick={() => {
-                      // Get current search params from URL
-                      const currentParams = new URLSearchParams(window.location.search);
-                      // Add tour details to params
-                      currentParams.set('type', 'tour');
-                      currentParams.set('name', tour.title);
-                      currentParams.set('image', tour.image);
-                      currentParams.set('price', tour.price.toString());
-                      currentParams.set('tourId', params.id);
-                      setLocation(`/payment?${currentParams.toString()}`);
-                    }}
+                    onClick={handleSearch}
                   >
                     Reservar ahora
                   </Button>
