@@ -49,110 +49,258 @@ export default function Home() {
     setLocation(`${routes[searchType as keyof typeof routes]}?${params.toString()}`);
   };
 
-  const renderSearchForm = () => {
-    return (
-      <div className="space-y-6">
-        <div>
-          <Select value={destination} onValueChange={setDestination}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecciona destino">
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>{destinations.find(d => d.id === destination)?.name}</span>
-                </div>
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              {destinations.map((dest) => (
-                <SelectItem key={dest.id} value={dest.id}>
-                  <div>
-                    <div className="font-medium">{dest.name}</div>
-                    <div className="text-xs text-gray-500">{dest.description}</div>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+  const renderTourForm = () => (
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <Select value={destination} onValueChange={setDestination}>
+        <SelectTrigger>
+          <SelectValue placeholder="¿A dónde quieres ir?">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              <span>{destinations.find(d => d.id === destination)?.name}</span>
+            </div>
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {destinations.map((dest) => (
+            <SelectItem key={dest.id} value={dest.id}>
+              <div>
+                <div className="font-medium">{dest.name}</div>
+                <div className="text-xs text-gray-500">{dest.description}</div>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !startDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, "PPP", { locale: es }) : <span>Fecha de entrada</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={startDate}
-                onSelect={setStartDate}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant={"outline"}
-                className={cn(
-                  "w-full justify-start text-left font-normal",
-                  !endDate && "text-muted-foreground"
-                )}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, "PPP", { locale: es }) : <span>Fecha de salida</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={endDate}
-                onSelect={setEndDate}
-                initialFocus
-                disabled={(date) => date < (startDate || new Date())}
-              />
-            </PopoverContent>
-          </Popover>
-
-          <Select value={guests} onValueChange={setGuests}>
-            <SelectTrigger>
-              <SelectValue placeholder="Número de huéspedes" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">1 huésped</SelectItem>
-              <SelectItem value="2">2 huéspedes</SelectItem>
-              <SelectItem value="3">3 huéspedes</SelectItem>
-              <SelectItem value="4">4 huéspedes</SelectItem>
-              <SelectItem value="5">5 huéspedes</SelectItem>
-              <SelectItem value="6">6+ huéspedes</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="flex justify-end">
-          <Button onClick={handleSearch}>
-            Buscar
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !startDate && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {startDate ? format(startDate, "PPP", { locale: es }) : <span>Fecha del tour</span>}
           </Button>
-        </div>
-      </div>
-    );
-  };
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={startDate}
+            onSelect={setStartDate}
+            initialFocus
+          />
+        </PopoverContent>
+      </Popover>
+
+      <Select value={guests} onValueChange={setGuests}>
+        <SelectTrigger>
+          <SelectValue placeholder="Número de personas" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="1">1 persona</SelectItem>
+          <SelectItem value="2">2 personas</SelectItem>
+          <SelectItem value="3">3 personas</SelectItem>
+          <SelectItem value="4">4 personas</SelectItem>
+          <SelectItem value="5">5 personas</SelectItem>
+          <SelectItem value="6">6+ personas</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Button onClick={handleSearch} className="w-full">
+        Buscar Tours
+      </Button>
+    </div>
+  );
+
+  const renderHotelForm = () => (
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <Select value={destination} onValueChange={setDestination}>
+        <SelectTrigger>
+          <SelectValue placeholder="¿Dónde te quieres hospedar?">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              <span>{destinations.find(d => d.id === destination)?.name}</span>
+            </div>
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {destinations.map((dest) => (
+            <SelectItem key={dest.id} value={dest.id}>
+              <div>
+                <div className="font-medium">{dest.name}</div>
+                <div className="text-xs text-gray-500">{dest.description}</div>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !startDate && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {startDate ? format(startDate, "PPP", { locale: es }) : <span>Check-in</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={startDate}
+            onSelect={setStartDate}
+            initialFocus
+          />
+        </PopoverContent>
+      </Popover>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !endDate && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {endDate ? format(endDate, "PPP", { locale: es }) : <span>Check-out</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={endDate}
+            onSelect={setEndDate}
+            initialFocus
+            disabled={(date) => date < (startDate || new Date())}
+          />
+        </PopoverContent>
+      </Popover>
+
+      <Select value={guests} onValueChange={setGuests}>
+        <SelectTrigger>
+          <SelectValue placeholder="Huéspedes" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="1">1 huésped</SelectItem>
+          <SelectItem value="2">2 huéspedes</SelectItem>
+          <SelectItem value="3">3 huéspedes</SelectItem>
+          <SelectItem value="4">4 huéspedes</SelectItem>
+          <SelectItem value="5">5 huéspedes</SelectItem>
+          <SelectItem value="6">6+ huéspedes</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Button onClick={handleSearch} className="w-full">
+        Buscar Hoteles
+      </Button>
+    </div>
+  );
+
+  const renderPackageForm = () => (
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <Select value={destination} onValueChange={setDestination}>
+        <SelectTrigger>
+          <SelectValue placeholder="¿A dónde quieres viajar?">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              <span>{destinations.find(d => d.id === destination)?.name}</span>
+            </div>
+          </SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          {destinations.map((dest) => (
+            <SelectItem key={dest.id} value={dest.id}>
+              <div>
+                <div className="font-medium">{dest.name}</div>
+                <div className="text-xs text-gray-500">{dest.description}</div>
+              </div>
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !startDate && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {startDate ? format(startDate, "PPP", { locale: es }) : <span>Inicio del viaje</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={startDate}
+            onSelect={setStartDate}
+            initialFocus
+          />
+        </PopoverContent>
+      </Popover>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-full justify-start text-left font-normal",
+              !endDate && "text-muted-foreground"
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {endDate ? format(endDate, "PPP", { locale: es }) : <span>Fin del viaje</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={endDate}
+            onSelect={setEndDate}
+            initialFocus
+            disabled={(date) => date < (startDate || new Date())}
+          />
+        </PopoverContent>
+      </Popover>
+
+      <Select value={guests} onValueChange={setGuests}>
+        <SelectTrigger>
+          <SelectValue placeholder="Viajeros" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="1">1 viajero</SelectItem>
+          <SelectItem value="2">2 viajeros</SelectItem>
+          <SelectItem value="3">3 viajeros</SelectItem>
+          <SelectItem value="4">4 viajeros</SelectItem>
+          <SelectItem value="5">5 viajeros</SelectItem>
+          <SelectItem value="6">6+ viajeros</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Button onClick={handleSearch} className="w-full">
+        Buscar Paquetes
+      </Button>
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main>
         {/* Hero Section with Search */}
-        <div className="relative h-[700px] flex items-center justify-center">
+        <div className="relative h-[800px] flex items-center justify-center">
           {/* Background Image with Overlay */}
           <div 
             className="absolute inset-0 z-0"
@@ -162,18 +310,18 @@ export default function Home() {
               backgroundPosition: "center",
             }}
           >
-            {/* Lighter gradient overlay for better image visibility */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30" />
+            {/* Very light gradient overlay for better image visibility */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/20" />
           </div>
 
           {/* Content */}
-          <div className="relative z-10 w-full max-w-4xl mx-auto px-4">
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4">
             {/* Hero Text */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-white text-center mb-16"
+              className="text-white text-center mb-24"
             >
               <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg">
                 Descubre Cuetzalan
@@ -189,7 +337,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-6 mt-16" // Added margin top
+              className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-6 mt-24"
             >
               <Tabs defaultValue="tours" value={searchType} onValueChange={setSearchType}>
                 <TabsList className="grid w-full grid-cols-3 mb-6">
@@ -207,16 +355,16 @@ export default function Home() {
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="tours">
-                  {renderSearchForm()}
+                <TabsContent value="tours" className="mt-0">
+                  {renderTourForm()}
                 </TabsContent>
 
-                <TabsContent value="hotels">
-                  {renderSearchForm()}
+                <TabsContent value="hotels" className="mt-0">
+                  {renderHotelForm()}
                 </TabsContent>
 
-                <TabsContent value="packages">
-                  {renderSearchForm()}
+                <TabsContent value="packages" className="mt-0">
+                  {renderPackageForm()}
                 </TabsContent>
               </Tabs>
             </motion.div>
@@ -229,9 +377,3 @@ export default function Home() {
     </div>
   );
 }
-
-const searchTypes = [
-  { id: "tours", name: "Tours" },
-  { id: "hotels", name: "Hoteles" },
-  { id: "packages", name: "Paquetes" }
-];
