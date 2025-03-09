@@ -16,67 +16,64 @@ interface SearchFormProps {
   isInline?: boolean;
   onSearch?: (searchParams: any) => void;
   searchType?: "hotels" | "tours" | "both";
+  initialStartDate?: string;
+  initialEndDate?: string;
+  initialGuests?: number;
+  initialRooms?: number;
 }
 
-export function SearchForm({ isInline = false, onSearch, searchType = "both" }: SearchFormProps) {
+export function SearchForm({ 
+  isInline = false, 
+  onSearch, 
+  searchType = "both",
+  initialStartDate,
+  initialEndDate,
+  initialGuests = 2,
+  initialRooms = 1
+}: SearchFormProps) {
   const [location, setLocation] = useLocation();
-  const searchParams = new URLSearchParams(window.location.search);
 
-  // Initialize state from URL parameters
-  const [destination, setDestination] = useState(searchParams.get("destination") || "");
+  // Initialize state from props or URL parameters
   const [startDate, setStartDate] = useState<Date | undefined>(
-    searchParams.get("startDate") ? new Date(searchParams.get("startDate")!) : undefined
+    initialStartDate ? new Date(initialStartDate) : undefined
   );
   const [endDate, setEndDate] = useState<Date | undefined>(
-    searchParams.get("endDate") ? new Date(searchParams.get("endDate")!) : undefined
+    initialEndDate ? new Date(initialEndDate) : undefined
   );
-  const [nights, setNights] = useState(searchParams.get("nights") || "");
-  const [guests, setGuests] = useState(searchParams.get("guests") || "2");
-  const [activeType, setActiveType] = useState(searchParams.get("type") || (searchType === "both" ? "tours" : searchType));
-
-  const regions = ["Europa", "Asia", "América", "África", "Oceanía"];
+  const [guests, setGuests] = useState(String(initialGuests));
+  const [activeType, setActiveType] = useState(searchType === "both" ? "tours" : searchType);
 
   const handleSearch = () => {
-    // Preserve existing parameters that we want to keep
-    const currentParams = new URLSearchParams(window.location.search);
-    const paramsToKeep = ["hotelId", "tourId"];
-    const newParams = new URLSearchParams();
-
-    // Keep specific parameters if they exist
-    paramsToKeep.forEach(param => {
-      if (currentParams.has(param)) {
-        newParams.set(param, currentParams.get(param)!);
-      }
-    });
-
-    // Add search parameters
-    if (destination) newParams.set('destination', destination);
-    if (startDate) newParams.set('startDate', startDate.toISOString());
-    if (endDate) newParams.set('endDate', endDate.toISOString());
-    if (nights) newParams.set('nights', nights);
-    if (guests) newParams.set('guests', guests);
-    newParams.set('type', activeType);
+    // Prepare search parameters
+    const searchParams = {
+      startDate,
+      endDate,
+      guests: Number(guests),
+      rooms: initialRooms,
+      type: activeType
+    };
 
     // If onSearch prop is provided, use that instead of navigation
     if (onSearch) {
-      onSearch({
-        destination,
-        startDate,
-        endDate,
-        nights,
-        guests,
-        type: activeType
-      });
+      onSearch(searchParams);
     } else {
-      // Redirect to the appropriate listing page based on search type
+      // Create URL parameters
+      const urlParams = new URLSearchParams();
+      if (startDate) urlParams.set('startDate', startDate.toISOString());
+      if (endDate) urlParams.set('endDate', endDate.toISOString());
+      if (guests) urlParams.set('guests', guests);
+      if (initialRooms) urlParams.set('rooms', String(initialRooms));
+      urlParams.set('type', activeType);
+
+      // Redirect to the appropriate page
       const route = activeType === 'hotels' ? '/hotels' : '/tours';
-      setLocation(`${route}?${newParams.toString()}`);
+      setLocation(`${route}?${urlParams.toString()}`);
     }
   };
 
   const containerClass = isInline 
     ? "" 
-    : "container mx-auto px-4 -mt-16 relative z-10";
+    : "container mx-auto px-4 relative z-10";
 
   const formClass = isInline
     ? "bg-transparent shadow-none p-0"
@@ -90,23 +87,7 @@ export function SearchForm({ isInline = false, onSearch, searchType = "both" }: 
   const renderSearchContent = (type: "hotels" | "tours") => {
     if (type === "tours") {
       return (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm text-gray-600">Destino</label>
-            <Select value={destination} onValueChange={setDestination}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona región" />
-              </SelectTrigger>
-              <SelectContent>
-                {regions.map((region) => (
-                  <SelectItem key={region} value={region.toLowerCase()}>
-                    {region}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <label className="text-sm text-gray-600">Fecha de salida</label>
             <Popover>
@@ -134,30 +115,45 @@ export function SearchForm({ isInline = false, onSearch, searchType = "both" }: 
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Duración</label>
-            <Select value={nights} onValueChange={setNights}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona noches" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1-5">1 a 5 noches</SelectItem>
-                <SelectItem value="6-10">6 a 10 noches</SelectItem>
-                <SelectItem value="11-15">11 a 15 noches</SelectItem>
-              </SelectContent>
-            </Select>
+            <label className="text-sm text-gray-600">Fecha de regreso</label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !endDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {endDate ? format(endDate, "PPP", { locale: es }) : <span>Selecciona fecha</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={endDate}
+                  onSelect={setEndDate}
+                  initialFocus
+                  disabled={(date) => date < (startDate || new Date())}
+                />
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm text-gray-600">Viajeros</label>
+            <label className="text-sm text-gray-600">Número de personas</label>
             <Select value={guests} onValueChange={setGuests}>
               <SelectTrigger>
-                <SelectValue placeholder="Número de viajeros" />
+                <SelectValue placeholder="Selecciona personas" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="1">1 viajero</SelectItem>
-                <SelectItem value="2">2 viajeros</SelectItem>
-                <SelectItem value="3">3 viajeros</SelectItem>
-                <SelectItem value="4">4 o más</SelectItem>
+                <SelectItem value="1">1 persona</SelectItem>
+                <SelectItem value="2">2 personas</SelectItem>
+                <SelectItem value="3">3 personas</SelectItem>
+                <SelectItem value="4">4 personas</SelectItem>
+                <SelectItem value="5">5 personas</SelectItem>
+                <SelectItem value="6">6+ personas</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -230,7 +226,9 @@ export function SearchForm({ isInline = false, onSearch, searchType = "both" }: 
               <SelectItem value="1">1 huésped</SelectItem>
               <SelectItem value="2">2 huéspedes</SelectItem>
               <SelectItem value="3">3 huéspedes</SelectItem>
-              <SelectItem value="4">4 o más</SelectItem>
+              <SelectItem value="4">4 huéspedes</SelectItem>
+              <SelectItem value="5">5 huéspedes</SelectItem>
+              <SelectItem value="6">6+ huéspedes</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -243,7 +241,7 @@ export function SearchForm({ isInline = false, onSearch, searchType = "both" }: 
       <motion.div
         initial={isInline ? false : { opacity: 0, y: 20 }}
         animate={isInline ? false : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.5 }}
         className={formClass}
       >
         {!isInline && (
@@ -278,10 +276,7 @@ export function SearchForm({ isInline = false, onSearch, searchType = "both" }: 
         )}
 
         <div className="mt-6 flex justify-end">
-          <Button 
-            className="bg-primary hover:bg-primary/90 text-white px-8"
-            onClick={handleSearch}
-          >
+          <Button onClick={handleSearch}>
             Buscar
           </Button>
         </div>
