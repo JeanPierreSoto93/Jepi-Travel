@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { MapPin, CalendarIcon, Users } from "lucide-react";
+import { MapPin, CalendarIcon, Building2, Package, Map } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Footer } from "@/components/Footer";
@@ -21,12 +22,6 @@ const destinations = [
     name: "Cuetzalan, Puebla",
     description: "Ciudad mágica en el corazón de la Sierra Norte"
   }
-];
-
-const searchTypes = [
-  { id: "tours", name: "Tours" },
-  { id: "hotels", name: "Hoteles" },
-  { id: "packages", name: "Paquetes" }
 ];
 
 export default function Home() {
@@ -54,37 +49,31 @@ export default function Home() {
     setLocation(`${routes[searchType as keyof typeof routes]}?${params.toString()}`);
   };
 
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main>
-        {/* Hero Section with Search */}
-        <div className="relative h-[500px] flex items-center justify-center">
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 z-0"
-            style={{
-              backgroundImage: "url('https://images.unsplash.com/photo-1682686580433-c4c4e9d8c515?q=80&w=1920&auto=format')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              filter: "brightness(0.7)"
-            }}
-          />
-
-          <div className="relative z-10 w-full max-w-4xl mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-lg shadow-xl p-6"
-            >
-              <h1 className="text-2xl font-bold mb-6">
-                Encuentra tu próxima aventura
-              </h1>
-
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Select value={searchType} onValueChange={setSearchType}>
+  const renderSearchForm = () => {
+    return (
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Select value={destination} onValueChange={setDestination}>
+            <SelectTrigger>
+              <SelectValue placeholder="Selecciona destino">
+                <div className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  <span>{destinations.find(d => d.id === destination)?.name}</span>
+                </div>
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              {destinations.map((dest) => (
+                <SelectItem key={dest.id} value={dest.id}>
+                  <div>
+                    <div className="font-medium">{dest.name}</div>
+                    <div className="text-xs text-gray-500">{dest.description}</div>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={searchType} onValueChange={setSearchType}>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecciona tipo de búsqueda" />
                     </SelectTrigger>
@@ -96,98 +85,149 @@ export default function Home() {
                       ))}
                     </SelectContent>
                   </Select>
+        </div>
 
-                  <Select value={destination} onValueChange={setDestination}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona destino">
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          <span>{destinations.find(d => d.id === destination)?.name}</span>
-                        </div>
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {destinations.map((dest) => (
-                        <SelectItem key={dest.id} value={dest.id}>
-                          <div>
-                            <div className="font-medium">{dest.name}</div>
-                            <div className="text-xs text-gray-500">{dest.description}</div>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !startDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {startDate ? format(startDate, "PPP", { locale: es }) : <span>Fecha de entrada</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={startDate}
+                onSelect={setStartDate}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !startDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {startDate ? format(startDate, "PPP", { locale: es }) : <span>Fecha de entrada</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={startDate}
-                        onSelect={setStartDate}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={"outline"}
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !endDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {endDate ? format(endDate, "PPP", { locale: es }) : <span>Fecha de salida</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={endDate}
+                onSelect={setEndDate}
+                initialFocus
+                disabled={(date) => date < (startDate || new Date())}
+              />
+            </PopoverContent>
+          </Popover>
 
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !endDate && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {endDate ? format(endDate, "PPP", { locale: es }) : <span>Fecha de salida</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={endDate}
-                        onSelect={setEndDate}
-                        initialFocus
-                        disabled={(date) => date < (startDate || new Date())}
-                      />
-                    </PopoverContent>
-                  </Popover>
+          <Select value={guests} onValueChange={setGuests}>
+            <SelectTrigger>
+              <SelectValue placeholder="Número de huéspedes" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="1">1 huésped</SelectItem>
+              <SelectItem value="2">2 huéspedes</SelectItem>
+              <SelectItem value="3">3 huéspedes</SelectItem>
+              <SelectItem value="4">4 huéspedes</SelectItem>
+              <SelectItem value="5">5 huéspedes</SelectItem>
+              <SelectItem value="6">6+ huéspedes</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-                  <Select value={guests} onValueChange={setGuests}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Número de huéspedes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">1 huésped</SelectItem>
-                      <SelectItem value="2">2 huéspedes</SelectItem>
-                      <SelectItem value="3">3 huéspedes</SelectItem>
-                      <SelectItem value="4">4 huéspedes</SelectItem>
-                      <SelectItem value="5">5 huéspedes</SelectItem>
-                      <SelectItem value="6">6+ huéspedes</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        <div className="flex justify-end">
+          <Button onClick={handleSearch}>
+            Buscar
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
-                <div className="flex justify-end">
-                  <Button onClick={handleSearch}>
-                    Buscar
-                  </Button>
-                </div>
-              </div>
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main>
+        {/* Hero Section with Search */}
+        <div className="relative h-[600px] flex items-center justify-center">
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 z-0"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1682686580433-c4c4e9d8c515?q=80&w=1920&auto=format')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              filter: "brightness(0.7)"
+            }}
+          />
+
+          {/* Content */}
+          <div className="relative z-10 w-full max-w-4xl mx-auto px-4">
+            {/* Hero Text */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-white text-center mb-8"
+            >
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                Descubre Cuetzalan
+              </h1>
+              <p className="text-xl md:text-2xl opacity-90">
+                Explora la magia de este pueblo mágico
+              </p>
+            </motion.div>
+
+            {/* Search Box */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-white rounded-lg shadow-xl p-6"
+            >
+              <Tabs defaultValue="tours" value={searchType} onValueChange={setSearchType}>
+                <TabsList className="grid w-full grid-cols-3 mb-6">
+                  <TabsTrigger value="tours" className="flex items-center gap-2">
+                    <Map className="h-4 w-4" />
+                    <span>Tours</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="hotels" className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    <span>Hoteles</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="packages" className="flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    <span>Paquetes</span>
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="tours">
+                  {renderSearchForm()}
+                </TabsContent>
+
+                <TabsContent value="hotels">
+                  {renderSearchForm()}
+                </TabsContent>
+
+                <TabsContent value="packages">
+                  {renderSearchForm()}
+                </TabsContent>
+              </Tabs>
             </motion.div>
           </div>
         </div>
@@ -198,3 +238,9 @@ export default function Home() {
     </div>
   );
 }
+
+const searchTypes = [
+  { id: "tours", name: "Tours" },
+  { id: "hotels", name: "Hoteles" },
+  { id: "packages", name: "Paquetes" }
+];
