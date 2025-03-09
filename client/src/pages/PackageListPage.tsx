@@ -49,7 +49,7 @@ export default function PackageListPage() {
       <Navbar />
       <main className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Paquetes en Cuetzalan</h1>
-        
+
         <Card className="mb-8">
           <div className="p-6">
             <SearchForm onSearch={handleSearch} searchType="both" />
@@ -130,14 +130,49 @@ export default function PackageListPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div>
+            {/* Custom Package Builder */}
+            <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Selecciona tu Hotel</h2>
-              {/* Add hotel selection component */}
-            </div>
-            <div>
+              <div className="space-y-4">
+                {/* Add hotel selection component */}
+                <div className="text-sm text-gray-500">
+                  Selecciona primero las fechas de tu estancia usando el buscador superior
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6">
               <h2 className="text-xl font-semibold mb-4">Selecciona tu Tour</h2>
-              {/* Add tour selection component */}
-            </div>
+              <div className="space-y-4">
+                {/* Add tour selection component */}
+                <div className="text-sm text-gray-500">
+                  Escoge el tour que mejor se adapte a tu estancia
+                </div>
+              </div>
+            </Card>
+
+            {/* Summary Card */}
+            <Card className="lg:col-span-2 p-6">
+              <h2 className="text-xl font-semibold mb-4">Resumen de tu Paquete</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-medium mb-2">Hotel Seleccionado</h3>
+                  <div className="text-sm text-gray-500">Ningún hotel seleccionado</div>
+                </div>
+                <div>
+                  <h3 className="font-medium mb-2">Tour Seleccionado</h3>
+                  <div className="text-sm text-gray-500">Ningún tour seleccionado</div>
+                </div>
+              </div>
+              <div className="mt-6">
+                <Button className="w-full" disabled>
+                  Completar Reservación
+                </Button>
+                <p className="text-xs text-center mt-2 text-gray-500">
+                  Selecciona un hotel y un tour para continuar
+                </p>
+              </div>
+            </Card>
           </div>
         )}
       </main>
