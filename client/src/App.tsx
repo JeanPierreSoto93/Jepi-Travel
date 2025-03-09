@@ -11,6 +11,7 @@ import TourDetailPage from "@/pages/TourDetailPage";
 import PaymentPage from "@/pages/PaymentPage";
 import ConfirmationPage from "@/pages/ConfirmationPage";
 import ReservationLookupPage from "@/pages/ReservationLookupPage";
+import PackageListPage from "@/pages/PackageListPage";
 
 function Router() {
   return (
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/payment" component={PaymentPage} />
       <Route path="/confirmation/:id" component={ConfirmationPage} />
       <Route path="/buscar-reserva" component={ReservationLookupPage} />
+      <Route path="/packages" component={PackageListPage} />
       <Route component={NotFound} />
     </Switch>
   );
