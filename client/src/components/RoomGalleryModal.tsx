@@ -30,31 +30,33 @@ export function RoomGalleryModal({ isOpen, onClose, room }: RoomGalleryModalProp
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl p-0">
-        <div className="relative">
+        <div className="flex items-center justify-between p-6 border-b">
+          <h2 className="text-xl font-semibold">Información de la habitación</h2>
           <Button
             variant="ghost"
             size="icon"
-            className="absolute right-4 top-4 z-50 bg-white/80 hover:bg-white/90 rounded-full"
+            className="rounded-full hover:bg-gray-100"
             onClick={onClose}
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </Button>
         </div>
 
-        <div className="max-h-[90vh] overflow-y-auto">
-          <div className="mb-6">
+        <div className="max-h-[80vh] overflow-y-auto">
+          <div className="p-6">
             <ImageGallery 
               mainImage={room.images[0]} 
               additionalImages={room.images.slice(1)}
             />
           </div>
 
-          <div className="px-6 pb-6 space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold mb-2">Información de la habitación</h2>
-              <Badge className="bg-primary mb-4">{room.name}</Badge>
+          <div className="px-6 pb-6 space-y-8">
+            <div className="space-y-4">
+              <Badge variant="secondary" className="text-base font-medium">
+                {room.name}
+              </Badge>
               {room.description && (
-                <p className="text-gray-600 mt-2">{room.description}</p>
+                <p className="text-gray-600">{room.description}</p>
               )}
             </div>
 
