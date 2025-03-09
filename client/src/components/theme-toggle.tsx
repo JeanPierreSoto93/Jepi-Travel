@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Paintbrush } from "lucide-react";
+import { Paintbrush, Check } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,6 +8,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 
 interface ThemeOption {
@@ -47,7 +50,25 @@ const themes: ThemeOption[] = [
     value: "174 86% 42%",
     textColor: "174 0% 98%",
     accent: "174 20% 96.1%"
+  },
+  { 
+    name: "Coral", 
+    value: "16 100% 66%",
+    textColor: "16 0% 98%",
+    accent: "16 20% 96.1%"
+  },
+  { 
+    name: "Índigo", 
+    value: "243 75% 59%",
+    textColor: "243 0% 98%",
+    accent: "243 20% 96.1%"
   }
+];
+
+const accentOptions = [
+  { name: "Suave", value: "20%" },
+  { name: "Medio", value: "40%" },
+  { name: "Fuerte", value: "60%" }
 ];
 
 export function ThemeToggle() {
@@ -57,15 +78,26 @@ export function ThemeToggle() {
     return themes.find(t => t.value === savedTheme) || themes[0];
   });
 
+  const [accentIntensity, setAccentIntensity] = useState(() => {
+    return localStorage.getItem("accentIntensity") || "40%";
+  });
+
   useEffect(() => {
     // Update CSS variables when theme changes
     document.documentElement.style.setProperty("--primary", currentTheme.value);
     document.documentElement.style.setProperty("--primary-foreground", currentTheme.textColor);
     document.documentElement.style.setProperty("--accent", currentTheme.accent);
 
+    // Update accent intensity
+    document.documentElement.style.setProperty(
+      "--accent-strength", 
+      accentIntensity
+    );
+
     // Save to localStorage
     localStorage.setItem("theme", currentTheme.value);
-  }, [currentTheme]);
+    localStorage.setItem("accentIntensity", accentIntensity);
+  }, [currentTheme, accentIntensity]);
 
   return (
     <DropdownMenu>
@@ -75,26 +107,62 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>Tema de Colores</DropdownMenuLabel>
+        <DropdownMenuLabel>Personalizar Tema</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {themes.map((theme) => (
-          <DropdownMenuItem
-            key={theme.value}
-            onClick={() => setCurrentTheme(theme)}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <div className="flex items-center gap-2 flex-1">
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <div className="flex items-center gap-2">
               <div
                 className="w-4 h-4 rounded-full ring-1 ring-border"
-                style={{ backgroundColor: `hsl(${theme.value})` }}
+                style={{ backgroundColor: `hsl(${currentTheme.value})` }}
               />
-              <span>{theme.name}</span>
+              <span>Color Principal</span>
             </div>
-            {currentTheme.value === theme.value && (
-              <div className="w-2 h-2 rounded-full bg-primary" />
-            )}
-          </DropdownMenuItem>
-        ))}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {themes.map((theme) => (
+              <DropdownMenuItem
+                key={theme.value}
+                onClick={() => setCurrentTheme(theme)}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <div className="flex items-center gap-2 flex-1">
+                  <div
+                    className="w-4 h-4 rounded-full ring-1 ring-border"
+                    style={{ backgroundColor: `hsl(${theme.value})` }}
+                  />
+                  <span>{theme.name}</span>
+                </div>
+                {currentTheme.value === theme.value && (
+                  <Check className="h-4 w-4" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <div className="flex items-center gap-2">
+              <span>Intensidad de Acentos</span>
+            </div>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            {accentOptions.map((option) => (
+              <DropdownMenuItem
+                key={option.value}
+                onClick={() => setAccentIntensity(option.value)}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <span>{option.name}</span>
+                {accentIntensity === option.value && (
+                  <Check className="h-4 w-4" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
   );

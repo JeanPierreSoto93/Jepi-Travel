@@ -24,6 +24,7 @@
     --input: 214.3 31.8% 91.4%;
     --ring: var(--primary);
     --radius: 0.5rem;
+    --accent-strength: 40%;
   }
 }
 
@@ -61,15 +62,15 @@
   }
 
   .bg-accent {
-    background-color: hsl(var(--accent));
+    background-color: hsl(var(--accent) / var(--accent-strength));
   }
 
   .text-accent {
-    color: hsl(var(--accent));
+    color: hsl(var(--accent) / var(--accent-strength));
   }
 
   .border-accent {
-    border-color: hsl(var(--accent));
+    border-color: hsl(var(--accent) / var(--accent-strength));
   }
 }
 
