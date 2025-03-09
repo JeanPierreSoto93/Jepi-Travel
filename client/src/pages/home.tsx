@@ -52,7 +52,7 @@ export default function Home() {
   const renderSearchForm = () => {
     return (
       <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
           <Select value={destination} onValueChange={setDestination}>
             <SelectTrigger>
               <SelectValue placeholder="Selecciona destino">
@@ -69,18 +69,6 @@ export default function Home() {
                     <div className="font-medium">{dest.name}</div>
                     <div className="text-xs text-gray-500">{dest.description}</div>
                   </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={searchType} onValueChange={setSearchType}>
-            <SelectTrigger>
-              <SelectValue placeholder="Selecciona tipo de búsqueda" />
-            </SelectTrigger>
-            <SelectContent>
-              {searchTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id}>
-                  {type.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -164,7 +152,7 @@ export default function Home() {
       <Navbar />
       <main>
         {/* Hero Section with Search */}
-        <div className="relative h-[600px] flex items-center justify-center">
+        <div className="relative h-[700px] flex items-center justify-center">
           {/* Background Image with Overlay */}
           <div 
             className="absolute inset-0 z-0"
@@ -174,8 +162,8 @@ export default function Home() {
               backgroundPosition: "center",
             }}
           >
-            {/* Dark gradient overlay for better text readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/50" />
+            {/* Lighter gradient overlay for better image visibility */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30" />
           </div>
 
           {/* Content */}
@@ -185,9 +173,9 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-white text-center mb-8"
+              className="text-white text-center mb-16"
             >
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white drop-shadow-lg">
+              <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg">
                 Descubre Cuetzalan
               </h1>
               <p className="text-xl md:text-2xl text-white/90 font-medium drop-shadow-md max-w-2xl mx-auto">
@@ -201,7 +189,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-6"
+              className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-6 mt-16" // Added margin top
             >
               <Tabs defaultValue="tours" value={searchType} onValueChange={setSearchType}>
                 <TabsList className="grid w-full grid-cols-3 mb-6">
