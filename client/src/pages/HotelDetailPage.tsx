@@ -309,9 +309,10 @@ export default function HotelDetailPage() {
                       <Button
                         variant="secondary"
                         size="sm"
-                        className="absolute bottom-2 right-2 bg-white/90 hover:bg-white"
+                        className="absolute bottom-2 right-2 rounded-full bg-black/75 hover:bg-black/90 text-white p-2 flex items-center gap-1.5"
                         onClick={() => openGallery(room)}
                       >
+                        <span className="text-sm font-medium">{room.images.length}</span>
                         <Maximize2 className="h-4 w-4" />
                       </Button>
                     </div>
