@@ -1,36 +1,39 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FaPlane, FaLock, FaHotel, FaGlobe, FaBuilding, FaBoxOpen } from "react-icons/fa";
+import { FaHotel, FaBoxOpen, FaBuilding, FaSearch } from "react-icons/fa";
 import { useLocation } from "wouter";
 
 const bookingOptions = [
-  { icon: FaPlane, label: "Vuelos" },
-  { icon: FaLock, label: "Seguros" },
-  { icon: FaHotel, label: "Tours" },
-  { icon: FaBoxOpen, label: "Paquetes" },
-  { icon: FaGlobe, label: "Vuelo + Hotel" },
-  { icon: FaBuilding, label: "Hoteles" }
+  { icon: FaBuilding, label: "Tours", route: "/tours" },
+  { icon: FaHotel, label: "Hoteles", route: "/hotels" },
+  { icon: FaBoxOpen, label: "Paquetes", route: "/packages" },
+  { icon: FaSearch, label: "Buscar Reserva", route: "/buscar-reserva" }
 ];
 
 export default function BookingTabs() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+
+  // Get the current active tab based on the route
+  const getCurrentTab = () => {
+    const path = location.split('?')[0]; // Remove query parameters
+    const option = bookingOptions.find(opt => opt.route === path);
+    return option ? option.label.toLowerCase() : "tours";
+  };
 
   const handleTabChange = (value: string) => {
-    // Convert tab value to route
-    const routes: { [key: string]: string } = {
-      "tours": "/tours",
-      "hoteles": "/hotels",
-      "paquetes": "/packages"
-    };
-
-    if (routes[value.toLowerCase()]) {
-      setLocation(routes[value.toLowerCase()]);
+    const option = bookingOptions.find(opt => opt.label.toLowerCase() === value);
+    if (option) {
+      setLocation(option.route);
     }
   };
 
   return (
     <div className="flex justify-center -mt-6 relative z-20">
-      <Tabs defaultValue="vuelos" className="w-full max-w-4xl mx-4" onValueChange={handleTabChange}>
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
+      <Tabs 
+        defaultValue={getCurrentTab()} 
+        className="w-full max-w-4xl mx-4" 
+        onValueChange={handleTabChange}
+      >
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
           {bookingOptions.map((option) => (
             <TabsTrigger
               key={option.label}
