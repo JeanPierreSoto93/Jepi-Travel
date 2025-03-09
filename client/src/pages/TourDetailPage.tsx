@@ -1,4 +1,4 @@
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ImageGallery } from "@/components/ImageGallery";
@@ -6,7 +6,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { 
+import {
   MapPin,
   Clock,
   Calendar,
@@ -76,6 +76,7 @@ const tour = {
 
 export default function TourDetailPage() {
   const params = useParams();
+  const [, setLocation] = useLocation();
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -99,7 +100,7 @@ export default function TourDetailPage() {
                     </div>
                   </div>
                 </div>
-                <ShareButtons 
+                <ShareButtons
                   title={tour.title}
                   description={tour.description}
                   image={tour.image}
@@ -209,7 +210,21 @@ export default function TourDetailPage() {
                     </div>
                   </div>
 
-                  <Button className="w-full" size="lg">
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    onClick={() => {
+                      // Get current search params from URL
+                      const currentParams = new URLSearchParams(window.location.search);
+                      // Add tour details to params
+                      currentParams.set('type', 'tour');
+                      currentParams.set('name', tour.title);
+                      currentParams.set('image', tour.image);
+                      currentParams.set('price', tour.price.toString());
+                      currentParams.set('tourId', params.id);
+                      setLocation(`/payment?${currentParams.toString()}`);
+                    }}
+                  >
                     Reservar ahora
                   </Button>
 

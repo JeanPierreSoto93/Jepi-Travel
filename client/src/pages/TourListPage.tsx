@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -410,7 +410,11 @@ export default function TourListPage() {
                           <Button
                             size="sm"
                             className="text-xs h-8"
-                            onClick={() => setLocation(`/tours/${tour.id}`)}
+                            onClick={() => {
+                              const currentParams = new URLSearchParams(window.location.search);
+                              currentParams.set('tourId', tour.id.toString());
+                              setLocation(`/tours/${tour.id}?${currentParams.toString()}`);
+                            }}
                           >
                             Reservar
                           </Button>
