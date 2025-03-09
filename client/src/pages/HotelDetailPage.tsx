@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ImageGallery } from "@/components/ImageGallery";
@@ -165,6 +165,7 @@ const getAmenityIcon = (amenity: string) => {
 
 export default function HotelDetailPage() {
   const params = useParams();
+  const [, setLocation] = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [availableRooms, setAvailableRooms] = useState(hotel.rooms);
   const [selectedRoom, setSelectedRoom] = useState<typeof hotel.rooms[0] | null>(null);
@@ -351,7 +352,19 @@ export default function HotelDetailPage() {
                             incluye impuestos y cargos
                           </p>
                         </div>
-                        <Button className="w-full mt-4">
+                        <Button
+                          className="w-full mt-4"
+                          onClick={() => {
+                            const searchParams = new URLSearchParams();
+                            searchParams.set('type', 'hotel');
+                            searchParams.set('name', room.name);
+                            searchParams.set('image', room.images[0]);
+                            searchParams.set('price', room.price.toString());
+                            searchParams.set('taxesAndFees', room.taxesAndFees.toString());
+                            searchParams.set('total', (room.price + room.taxesAndFees).toString());
+                            setLocation(`/payment?${searchParams.toString()}`);
+                          }}
+                        >
                           Reservar
                         </Button>
                       </div>
