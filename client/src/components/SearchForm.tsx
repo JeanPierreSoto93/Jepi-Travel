@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
@@ -18,6 +18,15 @@ interface SearchFormProps {
   initialGuests?: number;
   initialRooms?: number;
 }
+
+const destinations = [
+  {
+    id: "cuetzalan",
+    name: "Cuetzalan, Puebla",
+    description: "Ciudad mágica en el corazón de la Sierra Norte"
+  }
+  // Add more destinations as needed
+];
 
 export function SearchForm({ 
   isInline = false, 
@@ -37,10 +46,12 @@ export function SearchForm({
     initialEndDate ? new Date(initialEndDate) : undefined
   );
   const [guests, setGuests] = useState(String(initialGuests));
+  const [destination, setDestination] = useState(destinations[0].id); // Default to first destination
 
   const handleSearch = () => {
     // Prepare search parameters
     const searchParams = {
+      destination,
       startDate,
       endDate,
       guests: Number(guests),
@@ -53,6 +64,7 @@ export function SearchForm({
     } else {
       // Create URL parameters
       const urlParams = new URLSearchParams();
+      if (destination) urlParams.set('destination', destination);
       if (startDate) urlParams.set('startDate', startDate.toISOString());
       if (endDate) urlParams.set('endDate', endDate.toISOString());
       if (guests) urlParams.set('guests', guests);
@@ -81,7 +93,31 @@ export function SearchForm({
           <h2 className="text-xl font-semibold mb-4">Encuentra tu próxima aventura</h2>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm text-gray-600">Destino</label>
+            <Select value={destination} onValueChange={setDestination}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona destino">
+                  <div className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    <span>{destinations.find(d => d.id === destination)?.name}</span>
+                  </div>
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {destinations.map((dest) => (
+                  <SelectItem key={dest.id} value={dest.id}>
+                    <div>
+                      <div className="font-medium">{dest.name}</div>
+                      <div className="text-xs text-gray-500">{dest.description}</div>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="space-y-2">
             <label className="text-sm text-gray-600">Fecha de entrada</label>
             <Popover>
