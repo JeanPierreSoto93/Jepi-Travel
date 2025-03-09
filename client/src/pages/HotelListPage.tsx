@@ -344,7 +344,10 @@ export default function HotelListPage() {
                               MXN ${hotel.originalPrice.toLocaleString()}
                             </div>
                           </div>
-                          <Button onClick={() => setLocation(`/hotels/${hotel.id}`)}>
+                          <Button onClick={() => {
+                            const currentParams = new URLSearchParams(window.location.search);
+                            setLocation(`/hotels/${hotel.id}?${currentParams.toString()}`);
+                          }}>
                             Reservar ahora
                           </Button>
                         </div>

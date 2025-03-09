@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { motion } from "framer-motion";
 import { MapPin, Building2, Calendar as CalendarIcon } from "lucide-react";
@@ -19,24 +19,43 @@ interface SearchFormProps {
 }
 
 export function SearchForm({ isInline = false, onSearch, searchType = "both" }: SearchFormProps) {
-  const [, setLocation] = useLocation();
-  const [destination, setDestination] = useState("");
-  const [startDate, setStartDate] = useState<Date>();
-  const [endDate, setEndDate] = useState<Date>();
-  const [nights, setNights] = useState("");
-  const [guests, setGuests] = useState("2");
-  const [activeType, setActiveType] = useState(searchType === "both" ? "tours" : searchType);
+  const [location, setLocation] = useLocation();
+  const searchParams = new URLSearchParams(window.location.search);
+
+  // Initialize state from URL parameters
+  const [destination, setDestination] = useState(searchParams.get("destination") || "");
+  const [startDate, setStartDate] = useState<Date | undefined>(
+    searchParams.get("startDate") ? new Date(searchParams.get("startDate")!) : undefined
+  );
+  const [endDate, setEndDate] = useState<Date | undefined>(
+    searchParams.get("endDate") ? new Date(searchParams.get("endDate")!) : undefined
+  );
+  const [nights, setNights] = useState(searchParams.get("nights") || "");
+  const [guests, setGuests] = useState(searchParams.get("guests") || "2");
+  const [activeType, setActiveType] = useState(searchParams.get("type") || (searchType === "both" ? "tours" : searchType));
 
   const regions = ["Europa", "Asia", "América", "África", "Oceanía"];
 
   const handleSearch = () => {
-    const searchParams = new URLSearchParams();
-    if (destination) searchParams.set('destination', destination);
-    if (startDate) searchParams.set('startDate', startDate.toISOString());
-    if (endDate) searchParams.set('endDate', endDate.toISOString());
-    if (nights) searchParams.set('nights', nights);
-    if (guests) searchParams.set('guests', guests);
-    searchParams.set('type', activeType);
+    // Preserve existing parameters that we want to keep
+    const currentParams = new URLSearchParams(window.location.search);
+    const paramsToKeep = ["hotelId", "tourId"];
+    const newParams = new URLSearchParams();
+
+    // Keep specific parameters if they exist
+    paramsToKeep.forEach(param => {
+      if (currentParams.has(param)) {
+        newParams.set(param, currentParams.get(param)!);
+      }
+    });
+
+    // Add search parameters
+    if (destination) newParams.set('destination', destination);
+    if (startDate) newParams.set('startDate', startDate.toISOString());
+    if (endDate) newParams.set('endDate', endDate.toISOString());
+    if (nights) newParams.set('nights', nights);
+    if (guests) newParams.set('guests', guests);
+    newParams.set('type', activeType);
 
     // If onSearch prop is provided, use that instead of navigation
     if (onSearch) {
@@ -51,7 +70,7 @@ export function SearchForm({ isInline = false, onSearch, searchType = "both" }: 
     } else {
       // Redirect to the appropriate listing page based on search type
       const route = activeType === 'hotels' ? '/hotels' : '/tours';
-      setLocation(`${route}?${searchParams.toString()}`);
+      setLocation(`${route}?${newParams.toString()}`);
     }
   };
 

@@ -87,7 +87,7 @@ export default function Home() {
         {/* Featured Tours Section */}
         <section className="py-16 px-4">
           <div className="container mx-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -110,19 +110,19 @@ export default function Home() {
                   <Card className="overflow-hidden group hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1">
                     <div className="relative">
                       <div className="overflow-hidden">
-                        <img 
-                          src={tour.image} 
+                        <img
+                          src={tour.image}
                           alt={tour.title}
                           className="w-full h-48 object-cover transform group-hover:scale-110 transition-transform duration-700 ease-in-out"
                         />
                       </div>
-                      <Badge 
+                      <Badge
                         className="absolute top-4 left-4 bg-white text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300"
                       >
                         Salidas garantizadas
                       </Badge>
-                      <Badge 
-                        variant="destructive" 
+                      <Badge
+                        variant="destructive"
                         className="absolute top-4 right-4 group-hover:scale-110 transition-transform duration-300"
                       >
                         Hasta {tour.discount} de descuento
@@ -156,9 +156,13 @@ export default function Home() {
                           </div>
                         </div>
 
-                        <Button 
+                        <Button
                           className="w-full"
-                          onClick={() => setLocation(`/tours/${tour.id}`)}
+                          onClick={() => {
+                            const currentParams = new URLSearchParams(window.location.search);
+                            currentParams.set('tourId', tour.id.toString());
+                            setLocation(`/tours/${tour.id}?${currentParams.toString()}`);
+                          }}
                         >
                           Ver detalles
                         </Button>
@@ -180,7 +184,7 @@ export default function Home() {
         {/* Featured Hotels Section */}
         <section className="py-16 px-4 bg-gray-50">
           <div className="container mx-auto">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -228,9 +232,13 @@ export default function Home() {
                             MXN ${hotel.originalPrice.toLocaleString()}
                           </div>
                         </div>
-                        <Button 
+                        <Button
                           className="w-full mt-4"
-                          onClick={() => setLocation(`/hotels/${hotel.id}`)}
+                          onClick={() => {
+                            const currentParams = new URLSearchParams(window.location.search);
+                            currentParams.set('hotelId', hotel.id.toString());
+                            setLocation(`/hotels/${hotel.id}?${currentParams.toString()}`);
+                          }}
                         >
                           Ver detalles
                         </Button>

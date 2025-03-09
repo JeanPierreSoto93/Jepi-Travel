@@ -355,14 +355,17 @@ export default function HotelDetailPage() {
                         <Button
                           className="w-full mt-4"
                           onClick={() => {
-                            const searchParams = new URLSearchParams();
-                            searchParams.set('type', 'hotel');
-                            searchParams.set('name', room.name);
-                            searchParams.set('image', room.images[0]);
-                            searchParams.set('price', room.price.toString());
-                            searchParams.set('taxesAndFees', room.taxesAndFees.toString());
-                            searchParams.set('total', (room.price + room.taxesAndFees).toString());
-                            setLocation(`/payment?${searchParams.toString()}`);
+                            // Get current search params from URL
+                            const currentParams = new URLSearchParams(window.location.search);
+                            // Add room details to params
+                            currentParams.set('type', 'hotel');
+                            currentParams.set('name', room.name);
+                            currentParams.set('image', room.images[0]);
+                            currentParams.set('price', room.price.toString());
+                            currentParams.set('taxesAndFees', room.taxesAndFees.toString());
+                            currentParams.set('total', (room.price + room.taxesAndFees).toString());
+                            currentParams.set('hotelId', params.id); // Add hotel ID
+                            setLocation(`/payment?${currentParams.toString()}`);
                           }}
                         >
                           Reservar
