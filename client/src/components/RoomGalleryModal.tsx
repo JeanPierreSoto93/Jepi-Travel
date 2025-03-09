@@ -7,7 +7,8 @@ import {
   Users,
   BedDouble,
   Maximize2,
-  CheckCircle2
+  CheckCircle2,
+  X
 } from "lucide-react";
 
 interface RoomGalleryModalProps {
@@ -29,17 +30,31 @@ export function RoomGalleryModal({ isOpen, onClose, room }: RoomGalleryModalProp
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl p-0">
+        <div className="relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-4 z-50 bg-white/80 hover:bg-white/90 rounded-full"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+
         <div className="max-h-[90vh] overflow-y-auto">
-          <ImageGallery 
-            mainImage={room.images[0]} 
-            additionalImages={room.images.slice(1)}
-          />
-          
-          <div className="p-6 space-y-6">
+          <div className="mb-6">
+            <ImageGallery 
+              mainImage={room.images[0]} 
+              additionalImages={room.images.slice(1)}
+            />
+          </div>
+
+          <div className="px-6 pb-6 space-y-6">
             <div>
-              <h2 className="text-2xl font-semibold mb-2">{room.name}</h2>
+              <h2 className="text-2xl font-semibold mb-2">Información de la habitación</h2>
+              <Badge className="bg-primary mb-4">{room.name}</Badge>
               {room.description && (
-                <p className="text-gray-600">{room.description}</p>
+                <p className="text-gray-600 mt-2">{room.description}</p>
               )}
             </div>
 
