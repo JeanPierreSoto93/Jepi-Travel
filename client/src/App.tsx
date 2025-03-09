@@ -12,6 +12,7 @@ import PaymentPage from "@/pages/PaymentPage";
 import ConfirmationPage from "@/pages/ConfirmationPage";
 import ReservationLookupPage from "@/pages/ReservationLookupPage";
 import PackageListPage from "@/pages/PackageListPage";
+import { ScrollToTop } from "@/components/ScrollToTop";
 
 function Router() {
   return (
@@ -33,6 +34,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ScrollToTop />
       <Router />
       <Toaster />
     </QueryClientProvider>
