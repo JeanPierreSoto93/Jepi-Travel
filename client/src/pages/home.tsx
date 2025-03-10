@@ -14,6 +14,8 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Footer } from "@/components/Footer";
 import { TourCards } from "@/components/TourCards";
+import { getCurrentClient } from "@/utils/client-detection";
+import { HotelCards } from "@/components/HotelCards"; // Added import statement
 
 // Destinations data
 const destinations = [
@@ -32,6 +34,8 @@ export default function Home() {
   const [endDate, setEndDate] = useState<Date>();
   const [guests, setGuests] = useState("2");
 
+  const currentClient = getCurrentClient();
+
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (destination) params.set('destination', destination);
@@ -49,8 +53,9 @@ export default function Home() {
     setLocation(`${routes[searchType as keyof typeof routes]}?${params.toString()}`);
   };
 
-  const renderTourForm = () => (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+  const renderSearchForm = () => {
+    // Common destination selector
+    const DestinationSelect = () => (
       <Select value={destination} onValueChange={setDestination}>
         <SelectTrigger>
           <SelectValue placeholder="¿A dónde quieres ir?">
@@ -71,229 +76,116 @@ export default function Home() {
           ))}
         </SelectContent>
       </Select>
+    );
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className={cn(
-              "w-full justify-start text-left font-normal",
-              !startDate && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {startDate ? format(startDate, "PPP", { locale: es }) : <span>Fecha del tour</span>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            selected={startDate}
-            onSelect={setStartDate}
-            initialFocus
-          />
-        </PopoverContent>
-      </Popover>
-
+    // Common guests selector with customizable labels
+    const GuestsSelect = ({ label = "huéspedes" }) => (
       <Select value={guests} onValueChange={setGuests}>
         <SelectTrigger>
-          <SelectValue placeholder="Número de personas" />
+          <SelectValue placeholder={`Número de ${label}`} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="1">1 persona</SelectItem>
-          <SelectItem value="2">2 personas</SelectItem>
-          <SelectItem value="3">3 personas</SelectItem>
-          <SelectItem value="4">4 personas</SelectItem>
-          <SelectItem value="5">5 personas</SelectItem>
-          <SelectItem value="6">6+ personas</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Button onClick={handleSearch} className="w-full">
-        Buscar Tours
-      </Button>
-    </div>
-  );
-
-  const renderHotelForm = () => (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-      <Select value={destination} onValueChange={setDestination}>
-        <SelectTrigger>
-          <SelectValue placeholder="¿Dónde te quieres hospedar?">
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              <span>{destinations.find(d => d.id === destination)?.name}</span>
-            </div>
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {destinations.map((dest) => (
-            <SelectItem key={dest.id} value={dest.id}>
-              <div>
-                <div className="font-medium">{dest.name}</div>
-                <div className="text-xs text-gray-500">{dest.description}</div>
-              </div>
+          {[1, 2, 3, 4, 5, 6].map((num) => (
+            <SelectItem key={num} value={num.toString()}>
+              {num} {num === 1 ? label.slice(0, -2) : label}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
+    );
 
+    // Date selector component
+    const DateSelector = ({ label, value, onChange, minDate }: any) => (
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant={"outline"}
             className={cn(
               "w-full justify-start text-left font-normal",
-              !startDate && "text-muted-foreground"
+              !value && "text-muted-foreground"
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {startDate ? format(startDate, "PPP", { locale: es }) : <span>Check-in</span>}
+            {value ? format(value, "PPP", { locale: es }) : <span>{label}</span>}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
-            selected={startDate}
-            onSelect={setStartDate}
+            selected={value}
+            onSelect={onChange}
             initialFocus
+            disabled={minDate ? (date) => date < minDate : undefined}
           />
         </PopoverContent>
       </Popover>
+    );
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className={cn(
-              "w-full justify-start text-left font-normal",
-              !endDate && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {endDate ? format(endDate, "PPP", { locale: es }) : <span>Check-out</span>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            selected={endDate}
-            onSelect={setEndDate}
-            initialFocus
-            disabled={(date) => date < (startDate || new Date())}
-          />
-        </PopoverContent>
-      </Popover>
+    switch (searchType) {
+      case "tours":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <DestinationSelect />
+            <DateSelector 
+              label="Fecha del tour"
+              value={startDate}
+              onChange={setStartDate}
+            />
+            <GuestsSelect label="personas" />
+            <Button onClick={handleSearch} className="w-full">
+              Buscar Tours
+            </Button>
+          </div>
+        );
 
-      <Select value={guests} onValueChange={setGuests}>
-        <SelectTrigger>
-          <SelectValue placeholder="Huéspedes" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="1">1 huésped</SelectItem>
-          <SelectItem value="2">2 huéspedes</SelectItem>
-          <SelectItem value="3">3 huéspedes</SelectItem>
-          <SelectItem value="4">4 huéspedes</SelectItem>
-          <SelectItem value="5">5 huéspedes</SelectItem>
-          <SelectItem value="6">6+ huéspedes</SelectItem>
-        </SelectContent>
-      </Select>
+      case "hotels":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <DestinationSelect />
+            <DateSelector 
+              label="Check-in"
+              value={startDate}
+              onChange={setStartDate}
+            />
+            <DateSelector 
+              label="Check-out"
+              value={endDate}
+              onChange={setEndDate}
+              minDate={startDate || new Date()}
+            />
+            <GuestsSelect label="huéspedes" />
+            <Button onClick={handleSearch} className="w-full">
+              Buscar Hoteles
+            </Button>
+          </div>
+        );
 
-      <Button onClick={handleSearch} className="w-full">
-        Buscar Hoteles
-      </Button>
-    </div>
-  );
+      case "packages":
+        return (
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <DestinationSelect />
+            <DateSelector 
+              label="Inicio del viaje"
+              value={startDate}
+              onChange={setStartDate}
+            />
+            <DateSelector 
+              label="Fin del viaje"
+              value={endDate}
+              onChange={setEndDate}
+              minDate={startDate || new Date()}
+            />
+            <GuestsSelect label="viajeros" />
+            <Button onClick={handleSearch} className="w-full">
+              Buscar Paquetes
+            </Button>
+          </div>
+        );
 
-  const renderPackageForm = () => (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-      <Select value={destination} onValueChange={setDestination}>
-        <SelectTrigger>
-          <SelectValue placeholder="¿A dónde quieres viajar?">
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              <span>{destinations.find(d => d.id === destination)?.name}</span>
-            </div>
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {destinations.map((dest) => (
-            <SelectItem key={dest.id} value={dest.id}>
-              <div>
-                <div className="font-medium">{dest.name}</div>
-                <div className="text-xs text-gray-500">{dest.description}</div>
-              </div>
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className={cn(
-              "w-full justify-start text-left font-normal",
-              !startDate && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {startDate ? format(startDate, "PPP", { locale: es }) : <span>Inicio del viaje</span>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            selected={startDate}
-            onSelect={setStartDate}
-            initialFocus
-          />
-        </PopoverContent>
-      </Popover>
-
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant={"outline"}
-            className={cn(
-              "w-full justify-start text-left font-normal",
-              !endDate && "text-muted-foreground"
-            )}
-          >
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {endDate ? format(endDate, "PPP", { locale: es }) : <span>Fin del viaje</span>}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-auto p-0" align="start">
-          <Calendar
-            mode="single"
-            selected={endDate}
-            onSelect={setEndDate}
-            initialFocus
-            disabled={(date) => date < (startDate || new Date())}
-          />
-        </PopoverContent>
-      </Popover>
-
-      <Select value={guests} onValueChange={setGuests}>
-        <SelectTrigger>
-          <SelectValue placeholder="Viajeros" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="1">1 viajero</SelectItem>
-          <SelectItem value="2">2 viajeros</SelectItem>
-          <SelectItem value="3">3 viajeros</SelectItem>
-          <SelectItem value="4">4 viajeros</SelectItem>
-          <SelectItem value="5">5 viajeros</SelectItem>
-          <SelectItem value="6">6+ viajeros</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Button onClick={handleSearch} className="w-full">
-        Buscar Paquetes
-      </Button>
-    </div>
-  );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -305,7 +197,7 @@ export default function Home() {
           <div 
             className="absolute inset-0 z-0"
             style={{
-              backgroundImage: "url('https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?q=80&w=1920&auto=format')",
+              backgroundImage: `url('${currentClient.content.hero.backgroundImage}')`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
@@ -324,11 +216,10 @@ export default function Home() {
               className="text-white text-center mb-24"
             >
               <h1 className="text-5xl md:text-7xl font-bold mb-6 text-white drop-shadow-lg">
-                Descubre Cuetzalan
+                {currentClient.content.hero.title}
               </h1>
               <p className="text-xl md:text-2xl text-white/90 font-medium drop-shadow-md max-w-2xl mx-auto">
-                Explora uno de los pueblos mágicos más hermosos de México, 
-                donde la tradición y la naturaleza se encuentran
+                {currentClient.content.hero.subtitle}
               </p>
             </motion.div>
 
@@ -339,39 +230,53 @@ export default function Home() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-6 mt-24"
             >
-              <Tabs defaultValue="tours" value={searchType} onValueChange={setSearchType}>
-                <TabsList className="grid w-full grid-cols-3 mb-6">
-                  <TabsTrigger value="tours" className="flex items-center gap-2">
-                    <Map className="h-4 w-4" />
-                    <span>Tours</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="hotels" className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4" />
-                    <span>Hoteles</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="packages" className="flex items-center gap-2">
-                    <Package className="h-4 w-4" />
-                    <span>Paquetes</span>
-                  </TabsTrigger>
-                </TabsList>
+              {currentClient.type === 'full_agency' ? (
+                <Tabs defaultValue="tours" value={searchType} onValueChange={setSearchType}>
+                  <TabsList className="grid w-full grid-cols-3 mb-6">
+                    {currentClient.features.showTours && (
+                      <TabsTrigger value="tours" className="flex items-center gap-2">
+                        <Map className="h-4 w-4" />
+                        <span>Tours</span>
+                      </TabsTrigger>
+                    )}
+                    {currentClient.features.showHotels && (
+                      <TabsTrigger value="hotels" className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4" />
+                        <span>Hoteles</span>
+                      </TabsTrigger>
+                    )}
+                    {currentClient.features.showPackages && (
+                      <TabsTrigger value="packages" className="flex items-center gap-2">
+                        <Package className="h-4 w-4" />
+                        <span>Paquetes</span>
+                      </TabsTrigger>
+                    )}
+                  </TabsList>
 
-                <TabsContent value="tours" className="mt-0">
-                  {renderTourForm()}
-                </TabsContent>
+                  <TabsContent value="tours" className="mt-0">
+                    {renderSearchForm()}
+                  </TabsContent>
 
-                <TabsContent value="hotels" className="mt-0">
-                  {renderHotelForm()}
-                </TabsContent>
+                  <TabsContent value="hotels" className="mt-0">
+                    {renderSearchForm()}
+                  </TabsContent>
 
-                <TabsContent value="packages" className="mt-0">
-                  {renderPackageForm()}
-                </TabsContent>
-              </Tabs>
+                  <TabsContent value="packages" className="mt-0">
+                    {renderSearchForm()}
+                  </TabsContent>
+                </Tabs>
+              ) : (
+                // For single-type agencies, show only relevant form
+                renderSearchForm()
+              )}
             </motion.div>
           </div>
         </div>
 
-        <TourCards />
+        {/* Show tour/hotel cards based on client type */}
+        {(currentClient.type === 'full_agency' || currentClient.type === 'tour_agency') && <TourCards />}
+        {(currentClient.type === 'full_agency' || currentClient.type === 'hotel_agency') && <HotelCards />}
+
       </main>
       <Footer />
     </div>
