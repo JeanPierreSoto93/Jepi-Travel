@@ -26,6 +26,36 @@
     --radius: 0.5rem;
     --accent-strength: 40%;
   }
+
+  /* Professional variant - more muted, business-like */
+  [data-theme="professional"] {
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 14% 20%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 14% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 220 14% 20%;
+  }
+
+  /* Vibrant variant - more colorful and energetic */
+  [data-theme="vibrant"] {
+    --secondary: 210 90% 96%;
+    --secondary-foreground: 210 90% 20%;
+    --muted: 210 90% 96%;
+    --muted-foreground: 210 90% 46%;
+    --accent: 210 90% 96%;
+    --accent-foreground: 210 90% 20%;
+  }
+
+  /* Tint variant - softer, more elegant */
+  [data-theme="tint"] {
+    --secondary: var(--primary) / 0.1;
+    --secondary-foreground: var(--primary) / 0.9;
+    --muted: var(--primary) / 0.1;
+    --muted-foreground: var(--primary) / 0.6;
+    --accent: var(--primary) / 0.1;
+    --accent-foreground: var(--primary) / 0.9;
+  }
 }
 
 @layer base {
@@ -74,6 +104,7 @@
   }
 }
 
+/* Animation keyframes */
 @keyframes shimmer {
   0% {
     background-position: -1000px 0;
@@ -94,7 +125,7 @@
   background-size: 1000px 100%;
 }
 
-/* Cuetzalan-themed patterns */
+/* Custom Patterns */
 .pattern-zigzag {
   background-image: linear-gradient(45deg, transparent 25%, rgba(var(--primary) / 0.1) 25%, rgba(var(--primary) / 0.1) 50%, transparent 50%, transparent 75%, rgba(var(--primary) / 0.1) 75%);
   background-size: 10px 10px;

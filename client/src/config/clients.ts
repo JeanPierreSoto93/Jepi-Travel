@@ -27,7 +27,7 @@ export const clients: Record<string, ClientConfig> = {
     type: 'full_agency',
     domain: ['jepitravel.com', 'jepitravel.replit.app'],
     theme: {
-      primary: "oklch(61.66% 0.191 27.4)",
+      primary: "oklch(61.66% 0.191 27.4)", // Purple theme
       variant: "professional",
       appearance: "light",
       radius: 0.5
@@ -51,7 +51,7 @@ export const clients: Record<string, ClientConfig> = {
     type: 'tour_agency',
     domain: ['cancunguru.com', 'cancunguru.replit.app'],
     theme: {
-      primary: "oklch(54.94% 0.22 264.25)", // Deep blue
+      primary: "oklch(54.94% 0.22 264.25)", // Turquoise theme
       variant: "vibrant",
       appearance: "light",
       radius: 0.75
@@ -75,7 +75,7 @@ export const clients: Record<string, ClientConfig> = {
     type: 'hotel',
     domain: ['posadasantuario.com', 'posada-santuario.replit.app'],
     theme: {
-      primary: "oklch(40.39% 0.137 83.07)", // Warm brown
+      primary: "#DC143C", // Red theme
       variant: "professional",
       appearance: "light",
       radius: 0.5
