@@ -34,3 +34,14 @@ export function getClientFeatures(): ClientConfig['features'] {
 export function getClientContent(): ClientConfig['content'] {
   return getCurrentClient().content;
 }
+
+export function preserveAgencyParam(url: string): string {
+  const currentParams = new URLSearchParams(window.location.search);
+  const agency = currentParams.get('agency');
+
+  if (!agency) return url;
+
+  const newUrl = new URL(url, window.location.origin);
+  newUrl.searchParams.set('agency', agency);
+  return `${newUrl.pathname}${newUrl.search}`;
+}

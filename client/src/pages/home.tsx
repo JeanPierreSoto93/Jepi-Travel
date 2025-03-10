@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import { Footer } from "@/components/Footer";
 import { TourCards } from "@/components/TourCards";
 import { getCurrentClient } from "@/utils/client-detection";
-import { HotelCards } from "@/components/HotelCards"; // Added import statement
+import { HotelCards } from "@/components/HotelCards";
 
 // Destinations data
 const destinations = [
@@ -50,7 +50,9 @@ export default function Home() {
       packages: "/packages"
     };
 
-    setLocation(`${routes[searchType as keyof typeof routes]}?${params.toString()}`);
+    const route = routes[searchType as keyof typeof routes];
+    const newUrl = `${route}?${params.toString()}`;
+    setLocation(preserveAgencyParam(newUrl)); //This line uses the assumed preserveAgencyParam function.
   };
 
   const renderSearchForm = () => {
@@ -126,7 +128,7 @@ export default function Home() {
         return (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <DestinationSelect />
-            <DateSelector 
+            <DateSelector
               label="Fecha del tour"
               value={startDate}
               onChange={setStartDate}
@@ -142,12 +144,12 @@ export default function Home() {
         return (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <DestinationSelect />
-            <DateSelector 
+            <DateSelector
               label="Check-in"
               value={startDate}
               onChange={setStartDate}
             />
-            <DateSelector 
+            <DateSelector
               label="Check-out"
               value={endDate}
               onChange={setEndDate}
@@ -164,12 +166,12 @@ export default function Home() {
         return (
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <DestinationSelect />
-            <DateSelector 
+            <DateSelector
               label="Inicio del viaje"
               value={startDate}
               onChange={setStartDate}
             />
-            <DateSelector 
+            <DateSelector
               label="Fin del viaje"
               value={endDate}
               onChange={setEndDate}
@@ -194,7 +196,7 @@ export default function Home() {
         {/* Hero Section with Search */}
         <div className="relative h-[800px] flex items-center justify-center">
           {/* Background Image with Overlay */}
-          <div 
+          <div
             className="absolute inset-0 z-0"
             style={{
               backgroundImage: `url('${currentClient.content.hero.backgroundImage}')`,
@@ -282,3 +284,14 @@ export default function Home() {
     </div>
   );
 }
+
+// Placeholder for preserveAgencyParam function -  This needs to be implemented elsewhere.
+const preserveAgencyParam = (url: string): string => {
+  // Add your logic to preserve or add agency parameter here.  Example:
+  const urlObj = new URL(url, window.location.origin);
+  const agencyParam = localStorage.getItem('agency'); // example agency storage
+  if(agencyParam){
+    urlObj.searchParams.append('agency', agencyParam);
+  }
+  return urlObj.toString();
+};

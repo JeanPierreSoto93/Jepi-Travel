@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
+import { preserveAgencyParam } from "@/utils/client-detection";
 
 const tours = [
   {
@@ -149,7 +150,8 @@ export function TourCards() {
                       onClick={() => {
                         const currentParams = new URLSearchParams(window.location.search);
                         currentParams.set('tourId', tour.id.toString());
-                        setLocation(`/tours/${tour.id}?${currentParams.toString()}`);
+                        const newUrl = `/tours/${tour.id}?${currentParams.toString()}`;
+                        setLocation(preserveAgencyParam(newUrl));
                       }}
                       className="w-full"
                     >
@@ -226,7 +228,8 @@ export function TourCards() {
                       onClick={() => {
                         const currentParams = new URLSearchParams(window.location.search);
                         currentParams.set('hotelId', hotel.id.toString());
-                        setLocation(`/hotels/${hotel.id}?${currentParams.toString()}`);
+                        const newUrl = `/hotels/${hotel.id}?${currentParams.toString()}`;
+                        setLocation(preserveAgencyParam(newUrl));
                       }}
                       className="w-full"
                     >

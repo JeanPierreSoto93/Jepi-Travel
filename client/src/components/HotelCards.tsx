@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useLocation } from "wouter";
+import { preserveAgencyParam } from "@/utils/client-detection";
 
 // Mock data for hotels
 const hotels = [
@@ -119,7 +120,8 @@ export function HotelCards() {
                     onClick={() => {
                       const currentParams = new URLSearchParams(window.location.search);
                       currentParams.set('hotelId', hotel.id.toString());
-                      setLocation(`/hotels/${hotel.id}?${currentParams.toString()}`);
+                      const newUrl = `/hotels/${hotel.id}?${currentParams.toString()}`;
+                      setLocation(preserveAgencyParam(newUrl));
                     }}
                     className="w-full"
                   >
