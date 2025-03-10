@@ -16,6 +16,7 @@ import { Footer } from "@/components/Footer";
 import { TourCards } from "@/components/TourCards";
 import { getCurrentClient } from "@/utils/client-detection";
 import { HotelCards } from "@/components/HotelCards";
+import { preserveAgencyParam } from "@/utils/client-detection";
 
 // Destinations data
 const destinations = [
@@ -28,13 +29,25 @@ const destinations = [
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [searchType, setSearchType] = useState("tours");
+  const currentClient = getCurrentClient();
+
+  // Set initial search type based on client type
+  const initialSearchType = () => {
+    switch(currentClient.type) {
+      case 'hotel':
+        return 'hotels';
+      case 'tour_agency':
+        return 'tours';
+      default:
+        return 'tours';
+    }
+  };
+
+  const [searchType, setSearchType] = useState(initialSearchType());
   const [destination, setDestination] = useState(destinations[0].id);
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [guests, setGuests] = useState("2");
-
-  const currentClient = getCurrentClient();
 
   const handleSearch = () => {
     const params = new URLSearchParams();
@@ -43,16 +56,30 @@ export default function Home() {
     if (endDate) params.set('endDate', endDate.toISOString());
     if (guests) params.set('guests', guests);
 
-    // Redirect to appropriate page based on search type
-    const routes = {
-      tours: "/tours",
-      hotels: "/hotels",
-      packages: "/packages"
-    };
+    // Handle navigation based on client type
+    let targetUrl = '';
 
-    const route = routes[searchType as keyof typeof routes];
-    const newUrl = `${route}?${params.toString()}`;
-    setLocation(preserveAgencyParam(newUrl)); //This line uses the assumed preserveAgencyParam function.
+    switch(currentClient.type) {
+      case 'hotel':
+        // Direct to hotel detail page for hotel-only clients
+        targetUrl = `/hotels/${currentClient.id}?${params.toString()}`;
+        break;
+      case 'tour_agency':
+        // Direct to tours list for tour agencies
+        targetUrl = `/tours?${params.toString()}`;
+        break;
+      case 'full_agency':
+        // Direct to appropriate list page based on search type
+        const routes = {
+          tours: "/tours",
+          hotels: "/hotels",
+          packages: "/packages"
+        };
+        targetUrl = `${routes[searchType as keyof typeof routes]}?${params.toString()}`;
+        break;
+    }
+
+    setLocation(preserveAgencyParam(targetUrl));
   };
 
   const renderSearchForm = () => {
@@ -233,7 +260,7 @@ export default function Home() {
               className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl p-6 mt-24"
             >
               {currentClient.type === 'full_agency' ? (
-                <Tabs defaultValue="tours" value={searchType} onValueChange={setSearchType}>
+                <Tabs defaultValue={searchType} value={searchType} onValueChange={setSearchType}>
                   <TabsList className="grid w-full grid-cols-3 mb-6">
                     {currentClient.features.showTours && (
                       <TabsTrigger value="tours" className="flex items-center gap-2">
@@ -277,21 +304,10 @@ export default function Home() {
 
         {/* Show tour/hotel cards based on client type */}
         {(currentClient.type === 'full_agency' || currentClient.type === 'tour_agency') && <TourCards />}
-        {(currentClient.type === 'full_agency' || currentClient.type === 'hotel_agency') && <HotelCards />}
+        {(currentClient.type === 'full_agency' || currentClient.type === 'hotel') && <HotelCards />}
 
       </main>
       <Footer />
     </div>
   );
 }
-
-// Placeholder for preserveAgencyParam function -  This needs to be implemented elsewhere.
-const preserveAgencyParam = (url: string): string => {
-  // Add your logic to preserve or add agency parameter here.  Example:
-  const urlObj = new URL(url, window.location.origin);
-  const agencyParam = localStorage.getItem('agency'); // example agency storage
-  if(agencyParam){
-    urlObj.searchParams.append('agency', agencyParam);
-  }
-  return urlObj.toString();
-};

@@ -3,26 +3,41 @@ import { getClientTheme } from "@/utils/client-detection";
 
 export function ClientThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    const theme = getClientTheme();
+    function applyTheme() {
+      const theme = getClientTheme();
 
-    // Update theme.json values dynamically
-    // Handle both OKLCH and hex color formats
-    const primary = theme.primary.startsWith('#') 
-      ? theme.primary
-      : `oklch(${theme.primary})`;
+      // Handle both OKLCH and hex color formats
+      const primary = theme.primary.startsWith('#') 
+        ? theme.primary
+        : `oklch(${theme.primary})`;
 
-    document.documentElement.style.setProperty("--primary", primary);
-    document.documentElement.style.setProperty("--radius", `${theme.radius}rem`);
+      // Apply theme variables
+      document.documentElement.style.setProperty("--primary", primary);
+      document.documentElement.style.setProperty("--radius", `${theme.radius}rem`);
+      document.documentElement.setAttribute("data-theme", theme.variant);
 
-    // Update data-theme attribute for variant
-    document.documentElement.setAttribute("data-theme", theme.variant);
-
-    // Update color scheme preference
-    if (theme.appearance === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+      // Update color scheme preference
+      if (theme.appearance === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
     }
+
+    // Apply theme immediately
+    applyTheme();
+
+    // Also set up a listener for URL changes that might affect the agency
+    const observer = new MutationObserver(() => {
+      applyTheme();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-url']
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   return <>{children}</>;
