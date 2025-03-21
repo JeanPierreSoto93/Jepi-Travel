@@ -54,13 +54,16 @@ export function Navbar() {
     <header className="w-full bg-white shadow-sm">
       <div className="container mx-auto px-4">
         {/* Top Bar */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between py-2">
+        <div className="flex justify-between items-start py-4">
+          {/* Logo Section */}
           <Link href={preserveAgencyParam("/")}>
-            <span className="text-2xl font-bold text-primary mb-2 md:mb-0">
+            <span className="text-2xl font-bold text-primary">
               {currentClient.content.brand?.name || currentClient.name}
             </span>
           </Link>
-          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
+
+          {/* Contact Info Section - Right Aligned */}
+          <div className="flex flex-col items-end gap-2">
             {currentClient.content.contact?.phone && (
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-primary" />
