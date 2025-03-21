@@ -8,7 +8,6 @@ import {
   Mail
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { ThemeToggle } from "./theme-toggle";
 import { getCurrentClient } from "@/utils/client-detection";
 import { preserveAgencyParam } from "@/utils/client-detection";
 import type { ClientConfig } from "@/config/clients";
@@ -55,39 +54,38 @@ export function Navbar() {
     <header className="w-full bg-white shadow-sm">
       <div className="container mx-auto px-4">
         {/* Top Bar */}
-        <div className="flex items-center justify-between py-2">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between py-2">
           <Link href={preserveAgencyParam("/")}>
-            <span className="text-2xl font-bold text-primary">
+            <span className="text-2xl font-bold text-primary mb-2 md:mb-0">
               {currentClient.content.brand?.name || currentClient.name}
             </span>
           </Link>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
             {currentClient.content.contact?.phone && (
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="text-sm">{currentClient.content.contact.phone}</span>
+                <span>{currentClient.content.contact.phone}</span>
               </div>
             )}
             {currentClient.content.contact?.email && (
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="text-sm">{currentClient.content.contact.email}</span>
+                <span>{currentClient.content.contact.email}</span>
               </div>
             )}
-            <ThemeToggle />
           </div>
         </div>
 
         <Separator />
 
         {/* Navigation */}
-        <nav className="flex items-center justify-between py-4 overflow-x-auto">
-          <div className="flex items-center gap-6">
+        <nav className="py-4 overflow-x-auto">
+          <div className="flex items-center gap-4 md:gap-6">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={preserveAgencyParam(item.href)}
-                className="flex flex-col items-center gap-1 text-gray-600 hover:text-primary transition-colors min-w-[80px]"
+                className="flex flex-col items-center gap-1 text-gray-600 hover:text-primary transition-colors min-w-[70px] md:min-w-[80px]"
               >
                 <item.icon className="h-5 w-5" />
                 <span className="text-xs text-center whitespace-nowrap">{item.label}</span>
