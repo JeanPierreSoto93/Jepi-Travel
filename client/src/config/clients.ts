@@ -17,6 +17,15 @@ export interface ClientConfig {
       subtitle: string;
       backgroundImage: string;
     };
+    brand: {
+      name: string;
+      logo?: string;
+    };
+    contact?: {
+      phone?: string;
+      email?: string;
+      address?: string;
+    };
   };
 }
 
@@ -42,6 +51,13 @@ export const clients: Record<string, ClientConfig> = {
         title: "Descubre Cuetzalan",
         subtitle: "Explora uno de los pueblos mágicos más hermosos de México, donde la tradición y la naturaleza se encuentran",
         backgroundImage: "https://images.unsplash.com/photo-1585464231875-d9ef1f5ad396?q=80&w=1920&auto=format"
+      },
+      brand: {
+        name: "JepiTravel"
+      },
+      contact: {
+        phone: "(55) 54 82 82 82",
+        email: "info@jepitravel.com"
       }
     }
   },
@@ -66,6 +82,12 @@ export const clients: Record<string, ClientConfig> = {
         title: "Aventuras en Cuetzalan",
         subtitle: "Los mejores tours y experiencias en el corazón de la Sierra Norte de Puebla",
         backgroundImage: "https://images.unsplash.com/photo-1544085311-11a028465b03?q=80&w=1920&auto=format"
+      },
+      brand: {
+        name: "Cancun Guru"
+      },
+      contact: {
+        phone: "(998) 123 4567"
       }
     }
   },
@@ -90,6 +112,13 @@ export const clients: Record<string, ClientConfig> = {
         title: "Tu Hogar en Cuetzalan",
         subtitle: "Disfruta de una estancia inolvidable en el corazón del pueblo mágico",
         backgroundImage: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1920&auto=format"
+      },
+      brand: {
+        name: "Posada El Santuario"
+      },
+      contact: {
+        phone: "(233) 331 0123",
+        email: "reservas@posadasantuario.com"
       }
     }
   }

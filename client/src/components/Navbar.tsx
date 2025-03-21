@@ -5,31 +5,75 @@ import {
   Package, 
   Search,
   Phone,
+  Mail
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ThemeToggle } from "./theme-toggle";
+import { getCurrentClient } from "@/utils/client-detection";
+import { preserveAgencyParam } from "@/utils/client-detection";
+import type { ClientConfig } from "@/config/clients";
 
 export function Navbar() {
-  const navItems = [
-    { icon: MapPin, label: "Tours", href: "/tours" },
-    { icon: Building2, label: "Hoteles", href: "/hotels" },
-    { icon: Package, label: "Paquetes", href: "/packages" },
-    { icon: Search, label: "Buscar Reserva", href: "/buscar-reserva" }
-  ];
+  const currentClient = getCurrentClient();
+
+  // Define all possible nav items
+  const allNavItems = {
+    tours: { icon: MapPin, label: "Tours", href: "/tours", feature: "showTours" },
+    hotels: { icon: Building2, label: "Hoteles", href: "/hotels", feature: "showHotels" },
+    packages: { icon: Package, label: "Paquetes", href: "/packages", feature: "showPackages" },
+    search: { icon: Search, label: "Buscar Reserva", href: "/buscar-reserva", feature: "showSearch" }
+  } as const;
+
+  // Filter nav items based on client type and features
+  const getNavItems = () => {
+    switch (currentClient.type) {
+      case 'hotel':
+        // For hotels, only show hotel-specific pages
+        return [
+          allNavItems.hotels,
+          allNavItems.search
+        ];
+      case 'tour_agency':
+        // For tour agencies, show tours and search
+        return [
+          allNavItems.tours,
+          allNavItems.search
+        ];
+      case 'full_agency':
+        // For full agencies, show all enabled features
+        return Object.values(allNavItems).filter(item => 
+          currentClient.features[item.feature as keyof typeof currentClient.features]
+        );
+      default:
+        return [];
+    }
+  };
+
+  const navItems = getNavItems();
 
   return (
     <header className="w-full bg-white shadow-sm">
       <div className="container mx-auto px-4">
         {/* Top Bar */}
         <div className="flex items-center justify-between py-2">
-          <Link href="/">
-            <span className="text-2xl font-bold text-primary">JepiTravel</span>
+          <Link href={preserveAgencyParam("/")}>
+            <span className="text-2xl font-bold text-primary">
+              {currentClient.content.brand?.name || currentClient.name}
+            </span>
           </Link>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <Phone className="h-4 w-4 text-primary" />
-              <span className="text-sm">(55) 54 82 82 82</span>
-            </div>
+            {currentClient.content.contact?.phone && (
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-primary" />
+                <span className="text-sm">{currentClient.content.contact.phone}</span>
+              </div>
+            )}
+            {currentClient.content.contact?.email && (
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary" />
+                <span className="text-sm">{currentClient.content.contact.email}</span>
+              </div>
+            )}
             <ThemeToggle />
           </div>
         </div>
@@ -42,7 +86,7 @@ export function Navbar() {
             {navItems.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
+                href={preserveAgencyParam(item.href)}
                 className="flex flex-col items-center gap-1 text-gray-600 hover:text-primary transition-colors min-w-[80px]"
               >
                 <item.icon className="h-5 w-5" />
